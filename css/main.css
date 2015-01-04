@@ -1,0 +1,40 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+
+.spielstein
+{
+	height: 32px;
+	width:32px;
+	display:inline-block;
+}
+
+
+.spielstein:nth-child(2n-1)
+{
+	display:inline-block;
+}
+
+.spielstein:hover
+{
+	opacity: 0.8;
+}
+
+#spielcontainer
+{
+	width: auto;
+	height: auto;
+}
+
+
+
+
+
+
+
+
+
+
