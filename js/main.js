@@ -9,7 +9,6 @@ spielfeld = [];
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
-var scale = 32;
 
 	// Anzahl Reihen 
 	var rows = 8;
@@ -19,6 +18,10 @@ var scale = 32;
 
 	var initialisiert = false;
 
+	var gameReady = false;
+
+	var selektierterSpielstein;
+
 
 // Das Spielstein Objekt
 
@@ -26,16 +29,42 @@ function spielstein(x,y,value) {
     this.x = x;
     this.y = y;
     this.value = value;
+    this.selected = false;
     this.flaggedForDeletion = false;
     this.mydiv;
 
-    this.sayHello = function()
+    this.select = function()
 {
 	
 	console.warn(x+'/'+y);
 	//console.info(mydiv);
-	pruefeReihe(spielfeld[x]);
-	pruefeReihe(getReihe(y));
+	// console.info('Meine Spalte : '+getSpalte(y));
+	// console.info('Meine Reihe : '+spielfeld[x]);
+	// pruefeReihe(spielfeld[x]);
+	// pruefeReihe(getSpalte(y));
+	//Prüfen ob bereits ein Stein selektiert ist
+	if(selektierterSpielstein)
+	{
+		// Fall bereits ein Stein selektiert
+		console.info('Selektierter Stein ist : '+selektierterSpielstein.x+' / '+selektierterSpielstein.y);
+		console.info('Stein zum tauschen ist : '+x+' / '+y);
+
+		if(selektierterSpielstein === spielfeld[x][y])
+		{
+			console.log('Gleichen  Stein ausgewählt.');
+		}
+		tausche(selektierterSpielstein, spielfeld[x][y]);
+		spielfeldAktualisieren();
+
+	}
+	else
+	{
+		// Bisher kein Stein selektiert, selektiere Stein.
+		console.info('Selektierter Stein ist : '+x+'/'+y);
+		selektierterSpielstein = spielfeld[x][y];
+	}
+	spielfeldAusgeben();
+
 	
 }
 
@@ -62,6 +91,17 @@ function spielfeldInitialisieren()
 		spielfeldZeichnen();
 		console.log("Spielfeld erfolgreich erstellt.");
 		initialisiert = true;
+}
+
+function tausche(spielstein1, spielstein2)
+{
+	spielfeld[spielstein1.x][spielstein1.y] = spielstein2;
+	spielfeld[spielstein2.x][spielstein2.y] = spielstein1;
+	selektierterSpielstein = null;
+	
+
+
+
 }
 
 function spielfeldZeichnen()
@@ -94,12 +134,18 @@ function spielfeldZeichnen()
 
 				// console.info(spielfeld[k][m].mydiv);
 				
-				$(div).on("click",spielfeld[k][m].sayHello);
+				$(div).on("click",spielfeld[k][m].select);
 
-				
+				// Farbe des Steins ermittlen und Bild anfügen
+				var farbe = spielsteine[spielfeld[k][m].value];
+				if(spielfeld[k][m].flaggedForDeletion)
+				{	
+					console.info('Stein gelöscht');
+					farbe = null;
+				}
 
 				var image = $('<img/>',{
-					src: spielsteine[spielfeld[k][m].value] ,
+					src:  farbe,
 					id: k+'.i.'+m,
 					width : "32px",
 					height : "32px"
@@ -133,7 +179,6 @@ function pruefeReihe(array)
 	var count = 1;
 
 	//arrayAusgeben(array);
-	// spielfeldAusgeben()
 	// Prüfe für alle Felder im Array
 	for (var i = 0, len = array.length; i < len; i++) {
 		
@@ -194,7 +239,6 @@ function pruefeReihe(array)
 
 
 	}
-	// spielfeldAusgeben()
 	//arrayAusgeben(array);
 
 }
@@ -212,10 +256,29 @@ function spielfeldPruefen()
 	// Reihen überprüfen
 	for(var i = 0; i< rows ;i++)
 	{
-		pruefeReihe(getReihe(i));
+		pruefeReihe(getSpalte(i));
 
 	}
 	spielfeldAusgeben();
+	spielfeldAktualisieren();
+}
+
+function spielfeldAuffuellen()
+{
+	// Pruefe ob die oberste Reihe 'leere' Felder hat
+	// Falls ja, fülle diese
+	for (var i = spielfeld.length - 1; i >= 0; i--) {
+		
+		if(spielfeld[0][i].flaggedForDeletion)
+		{
+			console.info('Leeres Feld gefunden. Fülle auf.')
+			spielfeld[0][i] = new spielstein(0,i,getRandomInt(0,8))
+		}
+
+	};
+
+
+
 }
 
 function arrayAusgeben(array)
@@ -224,7 +287,7 @@ function arrayAusgeben(array)
 		var werte = [];
 		for(var i = 0;i<array.length;i++)
 		{
-			werte.push( array[i].value+" / "+  array[i].flaggedForDeletion);
+			werte.push( array[i].value);
 		}
 		console.info(werte);
 	}
@@ -234,7 +297,8 @@ function arrayAusgeben(array)
 	}
 }
 
-function getReihe(y)
+// Funktion die 
+function getSpalte(y)
 {
 	var reihenArray = [];
 	for(var i = 0;i<spielfeld.length;i++)
@@ -245,8 +309,11 @@ function getReihe(y)
 
 }
 
+// Funktion die den spielfeld array , Menschen leserlich auf der Console ausgibt.
 function spielfeldAusgeben()
 {
+	console.info('#######FELD-START#######');
+
 	//Für Anzahl Spalten
 	for(var i=0;i<cols;i++)
 	{
@@ -255,7 +322,7 @@ function spielfeldAusgeben()
 		for(var j=0;j<rows;j++)
 		{
 			// Gib ein *X* als gelöscht aus
-			if(spielfeld[i][j].flaggedForDeletion === true)
+			if(spielfeld[i][j].flaggedForDeletion)
 			{
 				reihe += '[X]';
 			}
@@ -269,10 +336,11 @@ function spielfeldAusgeben()
 
 	}
 
-	console.info('####################');
+	console.info('#######FELD-ENDE#######');
 
 }
 
+// Funktion die die Bilder für die Spielsteine in einen Array lädt.
 function ladeBilder()
 {
 	console.log("Versuche Bilder zu laden.");
@@ -285,13 +353,26 @@ function ladeBilder()
 	console.log("Bilder erfolgreich geladen.");
 }
 
+// Funktion die den Spielstart realisiert
 function starteSpiel()
 {
 	if(!initialisiert)
 	{
+
+	// Bilder laden
 	ladeBilder();	
+
+	// Spielfeld initialisieren
 	spielfeldInitialisieren();
+
+	// Auf 3 Prüfen
+	spielfeldPruefen();
 	
+	// Felder löschen
+	// spielsteineEntfernen()
+
+	// Neue Steine anfügen
+
 
 	}
 	else
@@ -302,7 +383,7 @@ function starteSpiel()
 
 }
 
-
+// Funktion die ein neues Spielfeld per RNG generiert.
 function neuesSpielfeld()
 {
 	// spielfeldAusgeben();
@@ -314,7 +395,6 @@ function neuesSpielfeld()
 		for(var j=0;j<rows;j++)
 		{
 			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
-
 			row.push(new spielstein(i,j,getRandomInt(0,8)));
 		}
 
@@ -326,24 +406,43 @@ function neuesSpielfeld()
 }
 
 
+// Funktion die das komplette Spielfeld löscht und neu zeichnet.
 function spielfeldAktualisieren()
 {
+	console.info('Aktualisiere Spielfeld.');
+
 	//Spielfeld löschen
 	$('#spielcontainer').empty();
 
-	spielfeldZeichnen();
 
-	
+
+	// Spielfeld neu zeichnen
+	spielfeldZeichnen();
 }
 
+// RNG (Random Number Generator) des Spiels
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
-
-
+// Funktion die aufgerufen wird sobald die Seite geladen wurde.
 $(document).ready(function()
 	{
 		starteSpiel();
 	});
+
+// Die Spiel Schleife des Spiels
+function GameLoop()
+{
+	// Spielfeld erstellen
+
+	// Spielfeld zeichnen
+
+	// Spielfeld auf '3' prüfen
+
+	// Felder löschen
+
+	// Spielzug möglich ?
+
+
+}
