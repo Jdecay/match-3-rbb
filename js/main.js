@@ -4,12 +4,51 @@
 // Platz für Variablen
 
 // Der Spielfeld Array
-var spielfeld = [];
+spielfeld = [];
 
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
 var scale = 32;
+
+	// Anzahl Reihen 
+	var rows = 8;
+
+	// Anzahl Spalten
+	var cols = 12;
+
+	var initialisiert = false;
+
+
+// Das Spielstein Objekt
+
+function spielstein(x,y,value) {
+    this.x = x;
+    this.y = y;
+    this.value = value;
+    this.flaggedForDeletion = false;
+    this.mydiv;
+
+    this.sayHello = function()
+{
+	
+	console.warn(x+'/'+y);
+	//console.info(mydiv);
+	pruefeReihe(spielfeld[x]);
+	pruefeReihe(getReihe(y));
+	
+}
+
+	this.setMarked = function()
+	{
+		console.log(this.mydiv);
+		this.mydiv.setAttribute('class','spielstein markiert');
+		console.log(this.mydiv);
+	}
+    
+    //Beispiel Methode
+    //this.name = function() {return this.firstName + " " + this.lastName;};
+}
 
 
 
@@ -17,14 +56,19 @@ var scale = 32;
 
 function spielfeldInitialisieren()
 {
+	if(initialisiert)
+	{
+		neuesSpielfeldGenerieren();
+		spielfeldAktualisieren();
 
-	console.info("Erstelle Spielfeld");
+	}
+	else
+	{
+		console.info("Erstelle Spielfeld");
+	
+	
 
-	// Anzahl Reihen 
-	var rows = 8;
 
-	// Anzahl Spalten
-	var cols = 12;
 
 	//Für Anzahl Spalten
 	for(var i=0;i<cols;i++)
@@ -33,8 +77,9 @@ function spielfeldInitialisieren()
 		// Für Anzahl Reihen
 		for(var j=0;j<rows;j++)
 		{
-			// Fülle Reihen-Array mit zufälligen Werten
-			row.push(getRandomInt(0,8));
+			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
+
+			row.push(new spielstein(i,j,getRandomInt(0,8)));
 		}
 
 		// Füge Reihen-Array zum Spalten-Array hinzu
@@ -58,29 +103,42 @@ function spielfeldInitialisieren()
 
 		for(var m=0,n=spielfeld[k].length;m<n;m++)
 			{
-				container = "#reihe"+k;
-				console.log(container);
+				// container = "#reihe"+k;
+				// console.log(container);
 
-				var div = $('<div/>', {
-					id: k+"."+m,
-					class:"spielstein",
-					onclick: 'sayHello('+k+','+m+')',
-					width : scale,
-					height : scale,
-					x : k * scale,
-					y : m * scale
-				}).appendTo(row);
+				// var div = $('<div/>', {
+				// 	id: k+"."+m,
+				// 	class:"spielstein",
+				// 	width : scale,
+				// 	height : scale,
+				// 	x : k * scale,
+				// 	y : m * scale
+				// }).appendTo(row);
+
+				var div = document.createElement('div');
+				div.setAttribute('class','spielstein');
+				div.setAttribute('id',k+'.d.'+m);
+
+
+				spielfeld[k][m].mydiv = div; 
+				$(div).appendTo(row);
+
+				// console.info(spielfeld[k][m].mydiv);
+				
+				$(div).on("click",spielfeld[k][m].sayHello);
+
+				
 
 				var image = $('<img/>',{
-					src: spielsteine[spielfeld[k][m]] ,
+					src: spielsteine[spielfeld[k][m].value] ,
+					id: k+'.i.'+m,
 					width : "32px",
 					height : "32px"
 				}).appendTo(div);
 
 
 
-				console.log('#'+k+'.'+m);
-				//$(container).append( $("<div class='spielstein'><img id='stein."+k+"."+m+"' width='32px' height='32px' src='"+spielsteine[spielfeld[k][m]]+"' /></div>"));
+				// console.log('#'+k+'.'+m);
 				
 				// Eher unnötig
 
@@ -92,16 +150,200 @@ function spielfeldInitialisieren()
 				// $(".spielstein").droppable();
 			} 
 	}
-
-
-
 	console.log("Spielfeld erfolgreich erstellt.");
+	initialisiert = true;
+}
+
+
+function neuesSpielfeldGenerieren()
+{
+
+	//Für Anzahl Spalten
+	for(var i=0;i<cols;i++)
+	{
+		row = [];
+		// Für Anzahl Reihen
+		for(var j=0;j<rows;j++)
+		{
+			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
+
+			row.push(new spielstein(i,j,getRandomInt(0,8)));
+		}
+
+		// Füge Reihen-Array zum Spalten-Array hinzu
+		spielfeld[i] = row;
+	}
+
+}	
+
+function spielfeldAktualisieren()
+{
+	// Durchlaufe jedes Element im Spielfeld und aktualisiere das betreffende Div
+	//Für Anzahl Spalten
+	for(var i=0;i<cols;i++)
+	{
+		row = [];
+		// Für Anzahl Reihen
+		for(var j=0;j<rows;j++)
+		{
+			// Selektiere das div des Spielsteins und ändere das Bild auf das gesetzte
+			console.log('Ändere Bild');
+			$('#'+i+'.i.'+j).attr("src", spielsteine[spielfeld[i][j].value]);
+		}
+
+
+	}
+}
 
 }
 
-function sayHello(x,y)
+// Methode pruefeReihe nimmt einen Array von Werten entgegen und sucht nach folgen > 3 mit gleichen Wert
+function pruefeReihe(array)
 {
-	console.warn(x+'/'+y);
+	// Variable die den Wert des zuletzt besuchten Feldes speichert
+	var saved;
+	// Zählvariable
+	var count = 1;
+
+	//arrayAusgeben(array);
+	// spielfeldAusgeben()
+	// Prüfe für alle Felder im Array
+	for (var i = 0, len = array.length; i < len; i++) {
+		
+		// Falls kein Feld besucht wurde, setze Feld auf aktuelles Feld und gehe eins weiter
+		if(saved === undefined)
+		{
+			saved = array[i];
+		}
+		//Falls bereits ein Feld besucht wurde, vergleiche aktuelles mit gespeichertem Feld
+		else
+		{
+			//Prüfe Werte der beiden Felder auf Gleichheit
+			if(saved.value === array[i].value)
+			{
+				// Feld ist gleich, erhöhe Zählvariable
+				count++;
+			}
+			//Felder sind nicht gleich
+			else
+			{
+				// Überprüfe ob mehr als 3 Felder hintereinander gefunden wurden
+				if(count >= 3)
+				{
+					// Mehr als drei Felder gleicher Farbe hintereinander wurden gefunden
+					// Durchlaufe alle Felder und setze diese auf destroyable
+					// i ist position im array / i-count ist erster Block der Reihe
+
+
+					// Anhand der Zählvariable Größe der Folge finden und Punkte vergeben
+
+					while(count > 0)
+					{
+						// Markiere Felder die gelöscht werden können
+						// Vergebe Punkte an Spieler
+
+						//TODO STEINE MARKIEREnn
+						console.log("Markiere Stein : ["+array[i-count].x+' / '+array[i-count].y+']');
+						console.log(array[i-count]);
+						array[i-count].flaggedForDeletion = true;
+						array[i-count].setMarked();
+						console.log(array[i-count]);
+						count--;
+					}
+					
+
+
+				}
+				// Weniger als 3 Felder gleicher Farbe wurden gefunden
+				else
+				{
+					count = 1;
+				}
+				// Speichere aktuelles Feld
+				saved = array[i];
+
+			}
+		}
+
+
+	}
+	// spielfeldAusgeben()
+	//arrayAusgeben(array);
+
+}
+
+function spielfeldPruefen()
+{
+	spielfeldAusgeben();
+
+	// Spalten überprüfen
+	for(var i = 0; i < cols ; i++)
+	{
+		pruefeReihe(spielfeld[i]);
+	}
+
+	// Reihen überprüfen
+	for(var i = 0; i< rows ;i++)
+	{
+		pruefeReihe(getReihe(i));
+
+	}
+	spielfeldAusgeben();
+}
+
+function arrayAusgeben(array)
+{
+	if(array != undefined){
+		var werte = [];
+		for(var i = 0;i<array.length;i++)
+		{
+			werte.push( array[i].value+" / "+  array[i].flaggedForDeletion);
+		}
+		console.info(werte);
+	}
+	else
+	{
+		console.info('Array is undefined');
+	}
+}
+
+function getReihe(y)
+{
+	var reihenArray = [];
+	for(var i = 0;i<spielfeld.length;i++)
+	{
+		reihenArray.push(spielfeld[i][y]);
+	}
+	return reihenArray;
+
+}
+
+function spielfeldAusgeben()
+{
+	//Für Anzahl Spalten
+	for(var i=0;i<cols;i++)
+	{
+		var reihe = '|';
+		// Für Anzahl Reihen
+		for(var j=0;j<rows;j++)
+		{
+			// Gib ein *X* als gelöscht aus
+			if(spielfeld[i][j].flaggedForDeletion === true)
+			{
+				reihe += '[X]';
+			}
+			else{
+			// Gib den Feldwert auf der Konsole aus
+			reihe += '['+spielfeld[i][j].value+']';
+			}
+		}
+		reihe += '|';
+		console.info(reihe);
+
+	}
+
+	console.info('####################');
+
 }
 
 function ladeBilder()
@@ -118,8 +360,13 @@ function ladeBilder()
 
 function starteSpiel()
 {
-	ladeBilder();
+	if(!initialisiert)
+	{
+ladeBilder();	
 	spielfeldInitialisieren();
+	
+
+	}
 
 }
 
