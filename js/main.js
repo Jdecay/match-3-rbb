@@ -56,37 +56,16 @@ function spielstein(x,y,value) {
 
 function spielfeldInitialisieren()
 {
-	if(initialisiert)
-	{
-		neuesSpielfeldGenerieren();
-		spielfeldAktualisieren();
 
-	}
-	else
-	{
 		console.info("Erstelle Spielfeld");
-	
-	
+		neuesSpielfeld();
+		spielfeldZeichnen();
+		console.log("Spielfeld erfolgreich erstellt.");
+		initialisiert = true;
+}
 
-
-
-	//Für Anzahl Spalten
-	for(var i=0;i<cols;i++)
-	{
-		row = [];
-		// Für Anzahl Reihen
-		for(var j=0;j<rows;j++)
-		{
-			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
-
-			row.push(new spielstein(i,j,getRandomInt(0,8)));
-		}
-
-		// Füge Reihen-Array zum Spalten-Array hinzu
-		spielfeld[i] = row;
-	}
-
-
+function spielfeldZeichnen()
+{
 	// Erstelle Spielfeld mithilfe jQuery
 	// Durchlaufe jedes Element im Spielfeld Array 
 	
@@ -103,17 +82,7 @@ function spielfeldInitialisieren()
 
 		for(var m=0,n=spielfeld[k].length;m<n;m++)
 			{
-				// container = "#reihe"+k;
-				// console.log(container);
 
-				// var div = $('<div/>', {
-				// 	id: k+"."+m,
-				// 	class:"spielstein",
-				// 	width : scale,
-				// 	height : scale,
-				// 	x : k * scale,
-				// 	y : m * scale
-				// }).appendTo(row);
 
 				var div = document.createElement('div');
 				div.setAttribute('class','spielstein');
@@ -150,52 +119,10 @@ function spielfeldInitialisieren()
 				// $(".spielstein").droppable();
 			} 
 	}
-	console.log("Spielfeld erfolgreich erstellt.");
-	initialisiert = true;
 }
 
 
-function neuesSpielfeldGenerieren()
-{
 
-	//Für Anzahl Spalten
-	for(var i=0;i<cols;i++)
-	{
-		row = [];
-		// Für Anzahl Reihen
-		for(var j=0;j<rows;j++)
-		{
-			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
-
-			row.push(new spielstein(i,j,getRandomInt(0,8)));
-		}
-
-		// Füge Reihen-Array zum Spalten-Array hinzu
-		spielfeld[i] = row;
-	}
-
-}	
-
-function spielfeldAktualisieren()
-{
-	// Durchlaufe jedes Element im Spielfeld und aktualisiere das betreffende Div
-	//Für Anzahl Spalten
-	for(var i=0;i<cols;i++)
-	{
-		row = [];
-		// Für Anzahl Reihen
-		for(var j=0;j<rows;j++)
-		{
-			// Selektiere das div des Spielsteins und ändere das Bild auf das gesetzte
-			console.log('Ändere Bild');
-			$('#'+i+'.i.'+j).attr("src", spielsteine[spielfeld[i][j].value]);
-		}
-
-
-	}
-}
-
-}
 
 // Methode pruefeReihe nimmt einen Array von Werten entgegen und sucht nach folgen > 3 mit gleichen Wert
 function pruefeReihe(array)
@@ -362,12 +289,51 @@ function starteSpiel()
 {
 	if(!initialisiert)
 	{
-ladeBilder();	
+	ladeBilder();	
 	spielfeldInitialisieren();
 	
 
 	}
+	else
+	{
+		neuesSpielfeld();
+		spielfeldAktualisieren();
+	}
 
+}
+
+
+function neuesSpielfeld()
+{
+	// spielfeldAusgeben();
+	//Für Anzahl Spalten
+	for(var i=0;i<cols;i++)
+	{
+		row = [];
+		// Für Anzahl Reihen
+		for(var j=0;j<rows;j++)
+		{
+			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
+
+			row.push(new spielstein(i,j,getRandomInt(0,8)));
+		}
+
+		// Füge Reihen-Array zum Spalten-Array hinzu
+		spielfeld[i] = row;
+	}
+	console.info('Neues Spielfeld generiert.');
+	// spielfeldAusgeben();
+}
+
+
+function spielfeldAktualisieren()
+{
+	//Spielfeld löschen
+	$('#spielcontainer').empty();
+
+	spielfeldZeichnen();
+
+	
 }
 
 function getRandomInt(min, max) {
