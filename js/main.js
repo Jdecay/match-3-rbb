@@ -19,12 +19,9 @@ function spielstein(x,y,value) {
 
 	
 	console.warn(x+'/'+y);
-	//console.info(mydiv);
-	// console.info('Meine Spalte : '+getSpalte(y));
-	// console.info('Meine Reihe : '+spielfeld[x]);
-	// pruefeReihe(spielfeld[x]);
-	// pruefeReihe(getSpalte(y));
-	//Prüfen ob bereits ein Stein selektiert ist
+
+	console.log(this.spielstein.flaggedForDeletion);
+
 	if(selektierterSpielstein)
 	{
 		// Fall bereits ein Stein selektiert
@@ -77,19 +74,21 @@ spielfeld = [];
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
-	var anzahlSteine = 4;
+	var anzahlSteine = 8;
 	
 	// Anzahl Reihen 
-	var rows = 8;
+	var rows = 16;
 
 	// Anzahl Spalten
-	var cols = 12;
+	var cols = 16;
 
 	var initialisiert = false;
 
 	var gameReady = false;
 
 	var selektierterSpielstein;
+
+	var leeresBild = 'img/spielfeld/background.png';
 
 
 
@@ -166,7 +165,7 @@ function spielfeldZeichnen()
 
 				}
 				div.setAttribute('id',k+'.d.'+m);
-
+				div.spielstein = spielfeld[k][m];
 
 				spielfeld[k][m].mydiv = div; 
 				$(div).appendTo(row);
@@ -180,14 +179,13 @@ function spielfeldZeichnen()
 				if(spielfeld[k][m].flaggedForDeletion)
 				{	
 					console.info('Stein gelöscht');
-					farbe = null;
+					farbe = leeresBild;
 				}
 
 				var image = document.createElement('img');
-				if(farbe)
-				{
-					image.setAttribute('src',farbe);
-				}
+			
+				image.setAttribute('src',farbe);
+			
 				
 				image.setAttribute('id',k+'.i.'+m);
 				image.setAttribute('title','[X : '+spielfeld[k][m].x+', Y : '+spielfeld[k][m].y+' ] Value :'+spielfeld[k][m].value);
@@ -251,6 +249,33 @@ function pruefeReihe(array)
 				// Feld ist gleich, erhöhe Zählvariable
 				count++;
 				console.info('Feld'+saved.toString()+ ' und '+array[i].toString()+' sind gleich');
+				
+				// Pruefe ob letztes Element des arrays
+				if(i+1 === len)
+				{
+					if(count > 3)
+					{
+						console.log('3 oder mehr gefunden.');
+					}
+
+					var position = array.indexOf(saved);
+					for(var k = 0; k < count;k++)
+					{
+						// Markiere Felder die gelöscht werden können
+						// Vergebe Punkte an Spieler
+
+						//TODO STEINE MARKIEREnn
+						console.log('Das Objekt an Stelle : '+ (position+k));
+						console.log(array[position+k]);
+						console.log("Markiere Stein : ["+array[position+k].x+' / '+array[position+k].y+']');
+						// console.log(array[i-count]);
+						array[position+k].flaggedForDeletion = true;
+						array[position+k].setMarked();
+						// console.log(array[i-count]);
+						
+					}
+
+				}
 			}
 			//Felder sind nicht gleich
 			else
@@ -270,18 +295,19 @@ function pruefeReihe(array)
 						console.log('3 oder mehr gefunden.');
 					}
 
-					while(count > 0)
+					var position = array.indexOf(saved);
+					for(var k = 0; k < count;k++)
 					{
 						// Markiere Felder die gelöscht werden können
 						// Vergebe Punkte an Spieler
 
 						//TODO STEINE MARKIEREnn
-						console.log("Markiere Stein : ["+array[i-count].x+' / '+array[i-count].y+']');
+						console.log("Markiere Stein : ["+array[position+k].x+' / '+array[position+k].y+']');
 						// console.log(array[i-count]);
-						array[i-count].flaggedForDeletion = true;
-						array[i-count].setMarked();
+						array[position+k].flaggedForDeletion = true;
+						array[position+k].setMarked();
 						// console.log(array[i-count]);
-						count--;
+						
 					}
 
 					
@@ -396,10 +422,11 @@ function spielfeldAusgeben()
 			}
 			else{
 			// Gib den Feldwert auf der Konsole aus
-			reihe += '['+spielfeld[i][j].value+'('+spielfeld[i][j].x+','+spielfeld[i][j].y+')]';
+			reihe += '['+spielfeld[i][j].value+'('+spielfeld[i][j].x+','+spielfeld[i][j].y+')('+spielfeld[i][j].flaggedForDeletion+')]';
 			}
 		}
 		reihe += '|';
+
 		console.info(reihe);
 
 	}
