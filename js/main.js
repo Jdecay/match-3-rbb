@@ -348,25 +348,25 @@ function markiereSteine(posX,posY,isReihe,count)
 
 function spielfeldPruefen()
 {
-	spielfeldAusgeben();
+	// spielfeldAusgeben();
 
 	// Reihen überprüfen
 	for(var i = 0; i < cols ; i++)
 	{
-		console.log('Pruefe Reihe '+i);
-		console.log(spielfeld[i],true);
+		// console.log('Pruefe Reihe '+i);
+		// console.log(spielfeld[i],true);
 		pruefeReihe(spielfeld[i],true);
 	}
 
 	// Spalten überprüfen
 	for(var i = 0; i< rows ;i++)
 	{
-		console.log('Pruefe Spalte '+i);
-		console.log(getSpalte(i),false);
+		// console.log('Pruefe Spalte '+i);
+		// console.log(getSpalte(i),false);
 		pruefeReihe(getSpalte(i),false);
 
 	}
-	spielfeldAusgeben();
+	// spielfeldAusgeben();
 	spielfeldAktualisieren();
 }
 
@@ -541,6 +541,111 @@ $(document).ready(function()
 	{
 		starteSpiel();
 	});
+
+//######################### Martins Block Start ############################//
+
+function moveBlocks()
+{
+	//Ausgegangen wird davon das Spielzug abgeschlossen ist und Steine zur Löschung markiert sind
+
+	//Durchgang Reihe
+	for (var yi=cols-1;yi>=0;yi--)
+	{
+		for(var xi=0;xi<rows;xi++)
+		{
+			if(spielfeld[xi][yi].flaggedForDeletion)
+			{
+				for(ny=yi+1;ny===0;ny--) //ny steht für neues Y also der Block der runterrutschen soll
+				{
+					 spielfeld[xi][ny-1].value = spielfeld[xi][ny].value;
+				}
+				spielfeld[0][yi].value = getRandomInt(0,anzahlSteine) //obere leere Felder kriegen neuen zuf. Wert zugeordnet
+			}
+		}
+	}
+}
+
+function CheckMovePossible()
+{
+	//Ausgegangen wird davon das kein Spielstein für die Löschung markiert ist
+	
+	var count = 0; //Variable zählt mögliche Spielzüge
+	//Durchgang Reihe
+	for (var yi=0;i<cols;yi++)
+	{
+		for(var xi=0;i<rows;xi++)
+		{
+			for(pi=0;pi===4;pi++)
+			{
+				if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
+					{
+						count++;
+					}
+			}
+		}
+	}
+	if(count === 0)
+	{
+		console.log("Kein Spielzug möglich!");
+	}
+	else
+	{
+		console.log(toString(count)+" Spielzüge möglich");
+	}
+}
+
+function boolMovePossibilties(x, y, value, intPosib)
+{
+	// TODO!!!! Überprüfung OutOfBoundException bei Randelementen!
+	var boolPoss = false
+	switch(intPosib){
+		case 1 : // 2 nebeneinander vertikal
+			if(spielfeld[x+1][y].value===value)
+			{
+				switch(true){
+				case spielfeld[x-2][y].value===value: boolPoss =true; break;
+				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x-1][y-1].value===value: boolPoss = true; break;
+				case spielfeld[x+3][y].value===value: boolPoss = true; break;
+				case spielfeld[x+2][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x+2][y-1].value===value: boolPoss = true; break;
+			}
+			}; break;
+		case 2 : //2 m Lücke vertikel
+			if(spielfeld[x+2][y].value===value)
+			{
+				switch(true){
+				case spielfeld[x+1][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x+1][y-1].value===value: boolPoss = true; break;
+			}
+			}; break;
+		case 3 : //2 nebeneinander horizontal
+			if(spielfeld[x][y+1].value===value)
+			{
+				switch(true){
+				case spielfeld[x][y-1].value===value: boolPoss = true; break;
+				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x-1][y-1].value===value: boolPoss = true; break;
+				case spielfeld[x+3][y].value===value: boolPoss = true; break;
+				case spielfeld[x+2][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x+2][y-1].value===value: boolPoss = true; break;
+			}
+			}; break;
+		case 4 : //2 m Lücke horizontal
+			if(spielfeld[x][y+2].value===value)
+			{
+				switch(true){
+				case spielfeld[x+1][y+1].value===value: boolPoss = true; break;
+				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
+			}
+			}; break;
+		default: break;
+	}
+	return boolPoss;
+}
+
+//######################### Martins Block Ende ############################//
+
 
 // Die Spiel Schleife des Spiels
 function GameLoop()
