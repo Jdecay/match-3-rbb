@@ -74,13 +74,13 @@ spielfeld = [];
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
-	var anzahlSteine = 8;
+	var anzahlSteine = 5;
 	
 	// Anzahl Reihen 
-	var rows = 16;
+	var rows = 8;
 
 	// Anzahl Spalten
-	var cols = 16;
+	var cols = 15;
 
 	var initialisiert = false;
 
@@ -223,7 +223,7 @@ function pruefeUmfeld(spielstein)
 
 
 // Methode pruefeReihe nimmt einen Array von Werten entgegen und sucht nach folgen > 3 mit gleichen Wert
-function pruefeReihe(array)
+function pruefeReihe(array,isReihe)
 {
 	// Variable die den Wert des zuletzt besuchten Feldes speichert
 	var saved = undefined;
@@ -238,6 +238,7 @@ function pruefeReihe(array)
 		// Falls kein Feld besucht wurde, setze Feld auf aktuelles Feld und gehe eins weiter
 		if(saved === undefined)
 		{
+			console.info('pruefeReihe saved === undefined');
 			saved = array[i];
 		}
 		//Falls bereits ein Feld besucht wurde, vergleiche aktuelles mit gespeichertem Feld
@@ -253,29 +254,15 @@ function pruefeReihe(array)
 				// Pruefe ob letztes Element des arrays
 				if(i+1 === len)
 				{
-					if(count > 3)
-					{
-						console.log('3 oder mehr gefunden.');
-					}
+				// Falls mehr als drei Elemente, markiere Elemente
+				if(count >= 3){
 
+					console.log(count+' gefunden.Letztes Element.');
 					var position = array.indexOf(saved);
-					for(var k = 0; k < count;k++)
-					{
-						// Markiere Felder die gelöscht werden können
-						// Vergebe Punkte an Spieler
-
-						//TODO STEINE MARKIEREnn
-						console.log('Das Objekt an Stelle : '+ (position+k));
-						console.log(array[position+k]);
-						console.log("Markiere Stein : ["+array[position+k].x+' / '+array[position+k].y+']');
-						// console.log(array[i-count]);
-						array[position+k].flaggedForDeletion = true;
-						array[position+k].setMarked();
-						// console.log(array[i-count]);
-						
-					}
+					markiereSteine(saved.x,saved.y,isReihe,count);}
 
 				}
+
 			}
 			//Felder sind nicht gleich
 			else
@@ -289,26 +276,18 @@ function pruefeReihe(array)
 
 
 					// Anhand der Zählvariable Größe der Folge finden und Punkte vergeben
-
-					if(count > 3)
-					{
-						console.log('3 oder mehr gefunden.');
-					}
-
+					
+					// Position des ersten zu markierenden Steins im array
 					var position = array.indexOf(saved);
-					for(var k = 0; k < count;k++)
-					{
-						// Markiere Felder die gelöscht werden können
-						// Vergebe Punkte an Spieler
 
-						//TODO STEINE MARKIEREnn
-						console.log("Markiere Stein : ["+array[position+k].x+' / '+array[position+k].y+']');
-						// console.log(array[i-count]);
-						array[position+k].flaggedForDeletion = true;
-						array[position+k].setMarked();
-						// console.log(array[i-count]);
+					markiereSteine(saved.x,saved.y,isReihe,count);
+					
 						
-					}
+					
+
+					
+					
+					count = 1;
 
 					
 
@@ -331,6 +310,42 @@ function pruefeReihe(array)
 
 }
 
+function markiereSteine(posX,posY,isReihe,count)
+{
+	console.log(count+' gefunden.');
+	console.log('Starte von stein '+spielfeld[posX][posY].toString()+' Reihe :'+isReihe);
+
+	for(var k = 0; k < count;k++)
+	{
+		// Markiere Felder die gelöscht werden können
+		// Vergebe Punkte an Spieler
+		if(isReihe)
+		{
+			// array repräsentiert eine Reihe, markiere steine auf der x achse indem du y erhöst
+			spielfeld[posX][posY+k].flaggedForDeletion = true;
+			spielfeld[posX][posY+k].setMarked();
+		}
+		else
+		{
+			// array repräsentiert eine Spalte, markiere steine auf der y achse indem du x erhöst
+			spielfeld[posX+k][posY].flaggedForDeletion = true;
+			spielfeld[posX+k][posY].setMarked();
+		}
+
+		//TODO STEINE MARKIEREnn
+		// console.log("Markiere Stein : ["+array[startposition+k].x+' / '+array[startposition+k].y+']');
+		// console.log(array[i-count]);
+		// array[position+k].flaggedForDeletion = true;
+		// array[position+k].setMarked();
+		// console.log(array[i-count]);
+					
+	}
+
+
+
+
+}
+
 function spielfeldPruefen()
 {
 	spielfeldAusgeben();
@@ -339,16 +354,16 @@ function spielfeldPruefen()
 	for(var i = 0; i < cols ; i++)
 	{
 		console.log('Pruefe Reihe '+i);
-		console.log(spielfeld[i]);
-		pruefeReihe(spielfeld[i]);
+		console.log(spielfeld[i],true);
+		pruefeReihe(spielfeld[i],true);
 	}
 
 	// Spalten überprüfen
 	for(var i = 0; i< rows ;i++)
 	{
 		console.log('Pruefe Spalte '+i);
-		console.log(getSpalte(i));
-		pruefeReihe(getSpalte(i));
+		console.log(getSpalte(i),false);
+		pruefeReihe(getSpalte(i),false);
 
 	}
 	spielfeldAusgeben();
