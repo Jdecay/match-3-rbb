@@ -13,8 +13,10 @@ function spielstein(x,y,value) {
     this.selected = false;
     this.flaggedForDeletion = false;
     this.mydiv;
+
     this.select = function()
-{
+	{
+
 	
 	console.warn(x+'/'+y);
 	//console.info(mydiv);
@@ -227,6 +229,7 @@ function pruefeReihe(array)
 {
 	// Variable die den Wert des zuletzt besuchten Feldes speichert
 	var saved = undefined;
+
 	// Zählvariable
 	var count = 1;
 
@@ -261,6 +264,11 @@ function pruefeReihe(array)
 
 
 					// Anhand der Zählvariable Größe der Folge finden und Punkte vergeben
+
+					if(count > 3)
+					{
+						console.log('3 oder mehr gefunden.');
+					}
 
 					while(count > 0)
 					{
@@ -312,8 +320,8 @@ function spielfeldPruefen()
 	// Spalten überprüfen
 	for(var i = 0; i< rows ;i++)
 	{
-		// console.log('Pruefe Spalte '+i);
-		// console.log(getSpalte(i));
+		console.log('Pruefe Spalte '+i);
+		console.log(getSpalte(i));
 		pruefeReihe(getSpalte(i));
 
 	}
@@ -426,7 +434,7 @@ function starteSpiel()
 	spielfeldInitialisieren();
 
 	// Auf 3 Prüfen
-	spielfeldPruefen();
+	// spielfeldPruefen();
 	
 	// Felder löschen
 	// spielsteineEntfernen()
