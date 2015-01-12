@@ -34,6 +34,16 @@
 	background-color: green;
 }
 
+.selektiert
+{
+	opacity: 0.8;
+}
+
+.row
+{
+	height: 32px;
+}
+
 
 
 

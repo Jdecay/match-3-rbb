@@ -1,26 +1,7 @@
 // Hier schreiben wir unser Spiel
 
 
-// Platz für Variablen
 
-// Der Spielfeld Array
-spielfeld = [];
-
-// Der Bilder Array der Werte auf Spielsteine abbildet
-var spielsteine = [];
-
-
-	// Anzahl Reihen 
-	var rows = 8;
-
-	// Anzahl Spalten
-	var cols = 12;
-
-	var initialisiert = false;
-
-	var gameReady = false;
-
-	var selektierterSpielstein;
 
 
 // Das Spielstein Objekt
@@ -32,7 +13,6 @@ function spielstein(x,y,value) {
     this.selected = false;
     this.flaggedForDeletion = false;
     this.mydiv;
-
     this.select = function()
 {
 	
@@ -62,6 +42,7 @@ function spielstein(x,y,value) {
 		// Bisher kein Stein selektiert, selektiere Stein.
 		console.info('Selektierter Stein ist : '+x+'/'+y);
 		selektierterSpielstein = spielfeld[x][y];
+		selektierterSpielstein.mydiv.setAttribute('class','spielstein selektiert');
 	}
 	spielfeldAusgeben();
 
@@ -70,14 +51,43 @@ function spielstein(x,y,value) {
 
 	this.setMarked = function()
 	{
-		console.log(this.mydiv);
+		// console.log(this.mydiv);
 		this.mydiv.setAttribute('class','spielstein markiert');
-		console.log(this.mydiv);
+		// console.log(this.mydiv);
 	}
-    
+
+	this.toString = function()
+	{
+		return '['+x+','+y+']';
+	}
+
+	    
     //Beispiel Methode
     //this.name = function() {return this.firstName + " " + this.lastName;};
 }
+
+
+// Platz für Variablen
+
+// Der Spielfeld Array
+spielfeld = [];
+
+// Der Bilder Array der Werte auf Spielsteine abbildet
+var spielsteine = [];
+
+	var anzahlSteine = 4;
+	
+	// Anzahl Reihen 
+	var rows = 8;
+
+	// Anzahl Spalten
+	var cols = 12;
+
+	var initialisiert = false;
+
+	var gameReady = false;
+
+	var selektierterSpielstein;
 
 
 
@@ -93,14 +103,32 @@ function spielfeldInitialisieren()
 		initialisiert = true;
 }
 
+// Tauscht zwei übergebene Spielsteine auf dem Spielfeld
 function tausche(spielstein1, spielstein2)
 {
-	spielfeld[spielstein1.x][spielstein1.y] = spielstein2;
-	spielfeld[spielstein2.x][spielstein2.y] = spielstein1;
-	selektierterSpielstein = null;
+	console.info("Tausche Stein "+spielfeld[spielstein1.x][spielstein1.y].toString()+" mit Stein "+spielfeld[spielstein2.x][spielstein2.y].toString());
+	// console.info(spielfeld[spielstein1.x][spielstein1.y]);
+	// console.info(spielfeld[spielstein2.x][spielstein2.y]);
+
+console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+	console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
+	console.warn('getauscht');
+	// Erstlle Kopie von Spielstein 1 
+	var copy = new spielstein(spielstein1.x,spielstein1.y,spielstein1.value);
+
+	// Tausche Spielstein 1 mit Spielstein 2
+	spielfeld[spielstein1.x][spielstein1.y] = new spielstein(spielstein1.x,spielstein1.y,spielstein2.value);
+
+	// Ersetze Spielstein
+	spielfeld[spielstein2.x][spielstein2.y] = new spielstein(spielstein2.x,spielstein2.y,spielstein1.value);
+
+
+
+	// console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+	// console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
 	
 
-
+	selektierterSpielstein = null;
 
 }
 
@@ -125,7 +153,16 @@ function spielfeldZeichnen()
 
 
 				var div = document.createElement('div');
-				div.setAttribute('class','spielstein');
+
+				if(spielfeld[k][m].flaggedForDeletion === true)
+				{
+					div.setAttribute('class','spielstein markiert');
+				}
+				else
+				{
+					div.setAttribute('class','spielstein');
+
+				}
 				div.setAttribute('id',k+'.d.'+m);
 
 
@@ -144,12 +181,23 @@ function spielfeldZeichnen()
 					farbe = null;
 				}
 
-				var image = $('<img/>',{
-					src:  farbe,
-					id: k+'.i.'+m,
-					width : "32px",
-					height : "32px"
-				}).appendTo(div);
+				var image = document.createElement('img');
+				if(farbe)
+				{
+					image.setAttribute('src',farbe);
+				}
+				
+				image.setAttribute('id',k+'.i.'+m);
+				image.setAttribute('title','[X : '+spielfeld[k][m].x+', Y : '+spielfeld[k][m].y+' ] Value :'+spielfeld[k][m].value);
+
+				$(image).appendTo(div);
+				// var image = $('<img/>',{
+				// 	src:  farbe,
+				// 	id: k+'.i.'+m,
+				// 	width : "32px",
+				// 	height : "32px"
+				// }).appendTo(div);
+
 
 
 
@@ -167,14 +215,18 @@ function spielfeldZeichnen()
 	}
 }
 
-
+function pruefeUmfeld(spielstein)
+{
+	// Pruefe für jeden Spielstein in der Umgebung ob er der gleichen Farbe wie der übergebende Spielstein hat
+	// Gib dann einen array aller umliegenden Spielsteine zurück
+}
 
 
 // Methode pruefeReihe nimmt einen Array von Werten entgegen und sucht nach folgen > 3 mit gleichen Wert
 function pruefeReihe(array)
 {
 	// Variable die den Wert des zuletzt besuchten Feldes speichert
-	var saved;
+	var saved = undefined;
 	// Zählvariable
 	var count = 1;
 
@@ -195,6 +247,7 @@ function pruefeReihe(array)
 			{
 				// Feld ist gleich, erhöhe Zählvariable
 				count++;
+				console.info('Feld'+saved.toString()+ ' und '+array[i].toString()+' sind gleich');
 			}
 			//Felder sind nicht gleich
 			else
@@ -216,12 +269,13 @@ function pruefeReihe(array)
 
 						//TODO STEINE MARKIEREnn
 						console.log("Markiere Stein : ["+array[i-count].x+' / '+array[i-count].y+']');
-						console.log(array[i-count]);
+						// console.log(array[i-count]);
 						array[i-count].flaggedForDeletion = true;
 						array[i-count].setMarked();
-						console.log(array[i-count]);
+						// console.log(array[i-count]);
 						count--;
 					}
+
 					
 
 
@@ -247,15 +301,19 @@ function spielfeldPruefen()
 {
 	spielfeldAusgeben();
 
-	// Spalten überprüfen
+	// Reihen überprüfen
 	for(var i = 0; i < cols ; i++)
 	{
+		console.log('Pruefe Reihe '+i);
+		console.log(spielfeld[i]);
 		pruefeReihe(spielfeld[i]);
 	}
 
-	// Reihen überprüfen
+	// Spalten überprüfen
 	for(var i = 0; i< rows ;i++)
 	{
+		// console.log('Pruefe Spalte '+i);
+		// console.log(getSpalte(i));
 		pruefeReihe(getSpalte(i));
 
 	}
@@ -300,12 +358,14 @@ function arrayAusgeben(array)
 // Funktion die 
 function getSpalte(y)
 {
-	var reihenArray = [];
+	var spalte = [];
 	for(var i = 0;i<spielfeld.length;i++)
 	{
-		reihenArray.push(spielfeld[i][y]);
+		spalte.push(spielfeld[i][y]);
 	}
-	return reihenArray;
+	// console.info('GetSpalte() liefert');
+	// console.info(spalte);
+	return spalte;
 
 }
 
@@ -328,7 +388,7 @@ function spielfeldAusgeben()
 			}
 			else{
 			// Gib den Feldwert auf der Konsole aus
-			reihe += '['+spielfeld[i][j].value+']';
+			reihe += '['+spielfeld[i][j].value+'('+spielfeld[i][j].x+','+spielfeld[i][j].y+')]';
 			}
 		}
 		reihe += '|';
@@ -377,6 +437,7 @@ function starteSpiel()
 	}
 	else
 	{
+		selektierterSpielstein = null;
 		neuesSpielfeld();
 		spielfeldAktualisieren();
 	}
@@ -395,7 +456,7 @@ function neuesSpielfeld()
 		for(var j=0;j<rows;j++)
 		{
 			// Fülle Reihen-Array mit Spielsteinen zufälligen Werten
-			row.push(new spielstein(i,j,getRandomInt(0,8)));
+			row.push(new spielstein(i,j,getRandomInt(0,anzahlSteine)));
 		}
 
 		// Füge Reihen-Array zum Spalten-Array hinzu
