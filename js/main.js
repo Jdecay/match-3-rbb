@@ -2,7 +2,12 @@
 
 
 
+// Das Spieler Objekt
 
+function spieler(name, punkte) {
+    this.name = name;
+    this.punkte = punkte;
+};
 
 // Das Spielstein Objekt
 
@@ -90,7 +95,8 @@ var spielsteine = [];
 
 	var leeresBild = 'img/spielfeld/background.png';
 
-
+	//Der Spieler
+	var sp;
 
 // Platz für Methoden
 
@@ -514,6 +520,8 @@ function neuesSpielfeld()
 	}
 	console.info('Neues Spielfeld generiert.');
 	// spielfeldAusgeben();
+
+	neuerSpieler();
 }
 
 
@@ -571,11 +579,11 @@ function CheckMovePossible()
 	
 	var count = 0; //Variable zählt mögliche Spielzüge
 	//Durchgang Reihe
-	for (var yi=0;i<cols;yi++)
+	for (var yi=0;yi<cols;yi++)
 	{
-		for(var xi=0;i<rows;xi++)
+		for(var xi=0;xi<rows;xi++)
 		{
-			for(pi=0;pi===4;pi++)
+			for(pi=0;pi < 4;pi++)
 			{
 				if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
 					{
@@ -645,6 +653,32 @@ function boolMovePossibilties(x, y, value, intPosib)
 }
 
 //######################### Martins Block Ende ############################//
+
+
+//######################### Olivers Block Start ############################//
+
+// Neuer Spieler
+function neuerSpieler(){
+    spieler.name = undefined;
+    
+    $(document).ready(function() {
+       $('#neuerSpieler').modal('show').on('click', '#nameSpeichern', function() {
+           $("#spielerName").empty();
+           
+           sp = new spieler("standard", 0);
+           sp.name = $('#nameInput').val();
+           
+           $('#spielerName').text(sp.name);
+           $('#spielerPunkte').text(sp.punkte);
+           console.log("Name: " + sp.name + "\n Punkte: ");
+           $('#neuerSpieler').modal('hide');
+       });
+    });
+    
+}
+
+//######################### Olivers Block Ende ############################//
+
 
 
 // Die Spiel Schleife des Spiels
