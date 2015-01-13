@@ -108,6 +108,7 @@ function spielfeldInitialisieren()
 		spielfeldZeichnen();
 		console.log("Spielfeld erfolgreich erstellt.");
 		initialisiert = true;
+        neuerSpieler();
 }
 
 // Tauscht zwei übergebene Spielsteine auf dem Spielfeld
@@ -117,7 +118,7 @@ function tausche(spielstein1, spielstein2)
 	// console.info(spielfeld[spielstein1.x][spielstein1.y]);
 	// console.info(spielfeld[spielstein2.x][spielstein2.y]);
 
-console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+    console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
 	console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
 	console.warn('getauscht');
 	// Erstlle Kopie von Spielstein 1 
@@ -520,8 +521,6 @@ function neuesSpielfeld()
 	}
 	console.info('Neues Spielfeld generiert.');
 	// spielfeldAusgeben();
-
-	neuerSpieler();
 }
 
 
@@ -658,23 +657,27 @@ function boolMovePossibilties(x, y, value, intPosib)
 //######################### Olivers Block Start ############################//
 
 // Neuer Spieler
-function neuerSpieler(){
-    spieler.name = undefined;
-    
+function neuerSpieler(){    
     $(document).ready(function() {
-       $('#neuerSpieler').modal('show').on('click', '#nameSpeichern', function() {
-           $("#spielerName").empty();
-           
-           sp = new spieler("standard", 0);
-           sp.name = $('#nameInput').val();
-           
-           $('#spielerName').text(sp.name);
-           $('#spielerPunkte').text(sp.punkte);
-           console.log("Name: " + sp.name + "\n Punkte: ");
-           $('#neuerSpieler').modal('hide');
-       });
-    });
-    
+        $('#nameSpielerInput').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('#nameSpeichern').click();
+            };
+        });
+        $('#neuerSpieler').modal('show').on('click', '#nameSpeichern', function() {
+            spielerErstellen();
+        });
+    }); 
+}
+
+function spielerErstellen() {           
+    sp = new spieler("Gast", 0);
+    sp.name = $('#nameSpielerInput').val();
+
+    $('#spielerName').text(sp.name);
+    $('#spielerPunkte').text(sp.punkte);
+    $('#neuerSpieler').modal('hide');
+    starteSpiel();
 }
 
 //######################### Olivers Block Ende ############################//

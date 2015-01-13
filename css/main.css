@@ -44,6 +44,19 @@
 	height: 32px;
 }
 
+.link, .link:hover
+{
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nolink, .nolink:hover
+{
+    cursor: default;
+    color: grey;
+    text-decoration: none;
+}
+
 
 
 

@@ -1,4 +1,4 @@
-d<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
@@ -25,15 +25,6 @@ d<!DOCTYPE html>
     </head>
     <body>
 
-         <div class="row">
-        <div class="col-md-1">
-            <label id="spielerName"></label>
-        </div>
-        <div class="col-md-1">
-            <label id="spielerPunkte"></label>
-        </div>
-    </diV>
-
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -49,8 +40,10 @@ d<!DOCTYPE html>
           <a class="navbar-brand" href="#">Verbinde 3</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-        <a class="btn btn-primary btn-lg" href="#" role="button" onclick="starteSpiel()">Start Game &raquo;</a>
-        <a class="btn btn-warning btn-lg" href="#" role="button" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a>
+            <p class="navbar-text navbar-right">Punkte: <a id="spielerPunkte" class="nolink">0</a></p>
+            <p class="navbar-text navbar-right" >Spieler: <a id="spielerName" class="link" onclick="neuerSpieler()">Gast</a></p>
+            <a class="btn btn-primary btn-lg" href="#" role="button" onclick="starteSpiel()">Start Game &raquo;</a>
+            <a class="btn btn-warning btn-lg" href="#" role="button" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -61,11 +54,10 @@ d<!DOCTYPE html>
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Modal title</h4>
+            <h4 class="modal-title">Spielername</h4>
           </div>
           <div class="modal-body">
-            <label class="control-label">Spieler:</label>
-            <input type="text" class="form-control" id="nameInput">
+            <input type="text" class="form-control" id="nameSpielerInput">
           </div>
           <div class="modal-footer">
             <button id="nameSpeichern" type="button" class="btn btn-primary">OK</button>
