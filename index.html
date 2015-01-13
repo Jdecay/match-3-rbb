@@ -25,22 +25,6 @@
     </head>
     <body>
         
-        <!--volkans zeile-->
-        <label id="punkteStand"></label><br>
-        <label>Reihen: <input min="6" max="36" class="rows" type="number" value="8"></label>
-        <label>Spalten: <input min="10" class="cols" type="number" value="12"></label>
-        <label>Block Anzahl: <input min="2" max="9"  class="blocks" type="number" value="4"></label>
-
-
-         <div class="row">
-        <div class="col-md-1">
-            <label id="spielerName"></label>
-        </div>
-        <div class="col-md-1">
-            <label id="spielerPunkte"></label>
-        </div>
-    </diV>
-
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -56,8 +40,10 @@
           <a class="navbar-brand" href="#">Verbinde 3</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-        <a class="btn btn-primary btn-lg" href="#" role="button" onclick="starteSpiel()">Start Game &raquo;</a>
-        <a class="btn btn-warning btn-lg" href="#" role="button" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a>
+            <p class="navbar-text navbar-right">Punkte: <a id="spielerPunkte" class="nolink">0</a></p>
+            <p class="navbar-text navbar-right" >Spieler: <a id="spielerName" class="link" onclick="neuerSpieler()">Gast</a></p>
+            <a class="btn btn-primary btn-lg" href="#" role="button" onclick="starteSpiel()">Start Game &raquo;</a>
+            <a class="btn btn-warning btn-lg" href="#" role="button" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
