@@ -97,6 +97,10 @@ var leeresBild = 'img/spielfeld/background.png';
 
 var punkteStand = 0;
 
+var timer;
+
+var countInSeconds = 90;
+
 //Der Spieler
 var sp;
 
@@ -110,7 +114,6 @@ function spielfeldInitialisieren()
     spielfeldZeichnen();
     console.log("Spielfeld erfolgreich erstellt.");
     initialisiert = true;
-    neuerSpieler();
 }
 
 // Tauscht zwei übergebene Spielsteine auf dem Spielfeld
@@ -128,11 +131,10 @@ function tausche(spielstein1, spielstein2)
 
     // Tausche Spielstein 1 mit Spielstein 2
     spielfeld[spielstein1.x][spielstein1.y] = new spielstein(spielstein1.x, spielstein1.y, spielstein2.value);
-    spielfeld[spielstein1.x][spielstein1.y].flaggedForDeletion = spielstein1.flaggedForDeletion;
 
     // Ersetze Spielstein
     spielfeld[spielstein2.x][spielstein2.y] = new spielstein(spielstein2.x, spielstein2.y, spielstein1.value);
-    spielfeld[spielstein2.x][spielstein2.y].flaggedForDeletion = spielstein2.flaggedForDeletion;
+
 
 
     // console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
@@ -409,6 +411,40 @@ function spielfeldAuffuellen()
 
 }
 
+
+    //-- countdown part begins --
+        var updateTime = countInSeconds;
+        function startTimer()
+        {
+            if(timer)
+            {
+                // Timer existiert. Alten Timer stoppen
+                stopTimer();
+                updateTime = countInSeconds;
+                
+            }
+            timer = window.setInterval(function() {
+                    updateTime = updateTime - 1;
+                    $("b[id=show-time]").html(updateTime);
+
+                    if(updateTime == 0){
+                        //wenn Timer abläuft
+                        $('#gameOver').modal('show');
+                        $('#punkteStandBeiGameOver').text(sp.punkte);
+                        updateTime = 50;
+                        stopTimer();
+                    }
+                }, 1000);
+        
+            
+        };
+
+    //-- countdown part ends --
+
+function stopTimer()
+{
+    clearInterval(timer); 
+}
 function arrayAusgeben(array)
 {
     if (array != undefined) {
@@ -503,6 +539,12 @@ function starteSpiel()
         // spielsteineEntfernen()
 
         // Neue Steine anfügen
+        
+
+        // Neuer Spieler "Default"
+        spielerErstellen();
+        // Starte Timer
+        startTimer();
 
 
     }
@@ -511,6 +553,7 @@ function starteSpiel()
         selektierterSpielstein = null;
         neuesSpielfeld();
         spielfeldAktualisieren();
+        startTimer();
     }
 
 }
@@ -539,8 +582,7 @@ function neuesSpielfeld()
     console.info('Neues Spielfeld generiert.');
     // spielfeldAusgeben();
 
-    neuerSpieler();
-    punkteStandZuruecksetzen();
+    //punkteStandZuruecksetzen();
 }
 
 
@@ -566,7 +608,7 @@ function getRandomInt(min, max) {
 // Funktion die aufgerufen wird sobald die Seite geladen wurde.
 $(document).ready(function ()
 {
-    starteSpiel();
+    //starteSpiel();
 });
 
 //######################### Martins Block Start ############################//
@@ -719,32 +761,22 @@ function boolMovePossibilties(x, y, value, intPosib)
 
 // Neuer Spieler
 function neuerSpieler() {
-    spieler.name = undefined;
-
-    $(document).ready(function () {
-        $('#neuerSpieler').modal('show').on('click', '#nameSpeichern', function () {
-            $("#spielerName").empty();
-
-            sp = new spieler("standard", 0);
-            sp.name = $('#nameInput').val();
-
-            $('#spielerName').text(sp.name);
-            $('#spielerPunkte').text(sp.punkte);
-            console.log("Name: " + sp.name + "\n Punkte: ");
-            $('#neuerSpieler').modal('hide');
-        });
+    $(document).ready(function() {
+        $('#neuerSpieler').modal('show');
     });
-
-}
+};
 
 function spielerErstellen() {           
     sp = new spieler("Gast", 0);
-    sp.name = $('#nameSpielerInput').val();
-
+    if($('#nameSpielerInput').val() != undefined)
+    {
+        sp.name = $('#nameSpielerInput').val();
+    }
+    console.log(sp);
     $('#spielerName').text(sp.name);
     $('#spielerPunkte').text(sp.punkte);
+    console.log(sp.punkte);
     $('#neuerSpieler').modal('hide');
-    starteSpiel();
 }
 
 //######################### Olivers Block Ende ############################//
@@ -754,25 +786,15 @@ function spielerErstellen() {
 
 function punkteBerechnung(count) {
     var wert = (count * 100) / (2 / count)
-    punkteStand += wert;
-    var test = punkteStand;
+    sp.punkte += wert;
+    var test = sp.punkte;
     //html highscore updaten 
     $(document).ready(function ()
     {
-        $("#punkteStand").text(test);
+        $("#spielerPunkte").text(test);
     });
-//    $("#input-setzen").click(function(){
-//    $("#input1").val("Gesetzter Wert");
-//});
 }
 
-function punkteStandZuruecksetzen() {
-    punkteStand = 0;
-    $(document).ready(function ()
-    {
-        $("#punkteStand").text(0);
-    });
-}
 
 $(".blocks").change(function () {
 
