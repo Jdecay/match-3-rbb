@@ -552,25 +552,57 @@ $(document).ready(function()
 
 //######################### Martins Block Start ############################//
 
+
 function moveBlocks()
 {
-	//Ausgegangen wird davon das Spielzug abgeschlossen ist und Steine zur Löschung markiert sind
+    // //Ausgegangen wird davon das Spielzug abgeschlossen ist und Steine zur Löschung markiert sind
+    // console.info('Moving Blocks');
+    // //Durchgang Reihe
+    // for (var yi=rows-1;yi>=0;yi--)
+    // {
+    //     for(var xi=0;xi<cols;xi++)
+    //     {
+    //         if(spielfeld[xi][yi].flaggedForDeletion)
+    //         {
+    //             for(ny=yi+1;ny===0;ny--) //ny steht für neues Y also der Block der runterrutschen soll
+    //             {
+    //                  spielfeld[xi][ny-1].value = spielfeld[xi][ny].value;
+    //             }
+    //             spielfeld[0][yi].value = getRandomInt(0,anzahlSteine) //obere leere Felder kriegen neuen zuf. Wert zugeordnet
+    //         }
+    //     }
+    // }
 
-	//Durchgang Reihe
-	for (var yi=cols-1;yi>=0;yi--)
-	{
-		for(var xi=0;xi<rows;xi++)
+    //Temporäre testvars
+
+    var zaehler = 0;
+    var position;
+
+    // Prüfe für jede Sppalte
+    for(var x = getSpalte(0).length; x >= 0; x--)
+    {
+    	position = null;
+        var current_spalte = getSpalte(x);
+        for(var i = current_spalte.length; i>=0; i--){ 
+        	if(i<current_spalte.length && current_spalte[i].flaggedForDeletion && current_spalte[i+1].flaggedForDeletion===false)
+            {  //tritt ein wenn aktuelles feld leer ist und das Feld davor ein Block und es nicht die unterste Reihe ist
+                position = current_spalte[i];
+            }
+            else if( === current_spalte.length && current_spalte[i].flaggedForDeletion===true)
+            {
+            	position = current_spalte[i];
+            }
+             else if(current_spalte[i].flaggedForDeletion===false && position!=null)
+            {
+            	tausche(position,current_spalte[i]);
+            }
+		}
+		for(var x = position; x>=0; x--)
 		{
-			if(spielfeld[xi][yi].flaggedForDeletion)
-			{
-				for(ny=yi+1;ny===0;ny--) //ny steht für neues Y also der Block der runterrutschen soll
-				{
-					 spielfeld[xi][ny-1].value = spielfeld[xi][ny].value;
-				}
-				spielfeld[0][yi].value = getRandomInt(0,anzahlSteine) //obere leere Felder kriegen neuen zuf. Wert zugeordnet
-			}
+			current_spalte[x].value = getRandomInt(0,anzahlSteine);
 		}
 	}
+
 }
 
 function CheckMovePossible()
@@ -579,11 +611,11 @@ function CheckMovePossible()
 	
 	var count = 0; //Variable zählt mögliche Spielzüge
 	//Durchgang Reihe
-	for (var yi=0;yi<cols;yi++)
+	for (var yi=0;i<cols;yi++)
 	{
-		for(var xi=0;xi<rows;xi++)
+		for(var xi=0;i<rows;xi++)
 		{
-			for(pi=0;pi < 4;pi++)
+			for(pi=0;pi==4;pi++)
 			{
 				if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
 					{
@@ -592,13 +624,13 @@ function CheckMovePossible()
 			}
 		}
 	}
-	if(count === 0)
+	if(count == 0)
 	{
 		console.log("Kein Spielzug möglich!");
 	}
 	else
 	{
-		console.log(toString(count)+" Spielzüge möglich");
+		console.log(count.toString()+" Spielzüge möglich");
 	}
 }
 
@@ -607,16 +639,16 @@ function boolMovePossibilties(x, y, value, intPosib)
 	// TODO!!!! Überprüfung OutOfBoundException bei Randelementen!
 	var boolPoss = false
 	switch(intPosib){
-		case 1 : // 2 nebeneinander vertikal
+		case 1 : // 2 nebeneinander horizontal
 			if(spielfeld[x+1][y].value===value)
 			{
 				switch(true){
-				case spielfeld[x-2][y].value===value: boolPoss =true; break;
-				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x-1][y-1].value===value: boolPoss = true; break;
-				case spielfeld[x+3][y].value===value: boolPoss = true; break;
+				case spielfeld[x+3][y].value===value: boolPoss = true; break
 				case spielfeld[x+2][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x+2][y-1].value===value: boolPoss = true; break;
+				case y-1>=0: if(spielfeld[x+2][y-1].value===value){boolPoss = true; }break; 
+				case x-1>=0: if(spielfeld[x-1][y+1].value===value){boolPoss = true; }break;
+				case x-1>=0 && y-1<=0: if(spielfeld[x-1][y-1].value===value){boolPoss = true; }break;
+				case x-2>=0: if(spielfeld[x-2][y].value===value){boolPoss =true; }break;					}
 			}
 			}; break;
 		case 2 : //2 m Lücke vertikel
@@ -624,19 +656,19 @@ function boolMovePossibilties(x, y, value, intPosib)
 			{
 				switch(true){
 				case spielfeld[x+1][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x+1][y-1].value===value: boolPoss = true; break;
+				case y-1>=0: if(spielfeld[x+1][y-1].value===value){boolPoss = true; }break;
 			}
 			}; break;
-		case 3 : //2 nebeneinander horizontal
+		case 3 : //2 nebeneinander vertikal
 			if(spielfeld[x][y+1].value===value)
 			{
 				switch(true){
-				case spielfeld[x][y-1].value===value: boolPoss = true; break;
-				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x-1][y-1].value===value: boolPoss = true; break;
-				case spielfeld[x+3][y].value===value: boolPoss = true; break;
+				case spielfeld[x][y+2].value===value: boolPoss = true; break;
 				case spielfeld[x+2][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x+2][y-1].value===value: boolPoss = true; break;
+				case y-1>=0: if(spielfeld[x+1][y-1].value===value) {boolPoss = true; } break;
+				case x-1>=0: if(spielfeld[x-1][y].value===value) {boolPoss = true; } break;
+				case x-1>=0 && y-1<=0:if(spielfeld[x-1][y-1].value===value) {boolPoss = true; } break;
+				case y-2>=0: if(spielfeld[x][y-2].value===value) {boolPoss = true; } break;
 			}
 			}; break;
 		case 4 : //2 m Lücke horizontal
@@ -644,7 +676,7 @@ function boolMovePossibilties(x, y, value, intPosib)
 			{
 				switch(true){
 				case spielfeld[x+1][y+1].value===value: boolPoss = true; break;
-				case spielfeld[x-1][y+1].value===value: boolPoss = true; break;
+				case x-1>=0: if(spielfeld[x-1][y+1].value===value) {boolPoss = true; } break;
 			}
 			}; break;
 		default: break;
