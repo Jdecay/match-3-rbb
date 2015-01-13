@@ -128,10 +128,11 @@ function tausche(spielstein1, spielstein2)
 
     // Tausche Spielstein 1 mit Spielstein 2
     spielfeld[spielstein1.x][spielstein1.y] = new spielstein(spielstein1.x, spielstein1.y, spielstein2.value);
+    spielfeld[spielstein1.x][spielstein1.y].flaggedForDeletion = spielstein1.flaggedForDeletion;
 
     // Ersetze Spielstein
     spielfeld[spielstein2.x][spielstein2.y] = new spielstein(spielstein2.x, spielstein2.y, spielstein1.value);
-
+    spielfeld[spielstein2.x][spielstein2.y].flaggedForDeletion = spielstein2.flaggedForDeletion;
 
 
     // console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
