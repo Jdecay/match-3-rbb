@@ -672,14 +672,15 @@ function CheckMovePossible()
 	
 	var count = 0; //Variable zählt mögliche Spielzüge
 	//Durchgang Reihe
-	for (var yi=0;i<cols;yi++)
+	for (var yi=0;yi<cols;yi++)
 	{
-		for(var xi=0;i<rows;xi++)
+		for(var xi=0;xi<rows;xi++)
 		{
 			for(pi=0;pi==4;pi++)
 			{
 				if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
 					{
+                        // Abbrechen da Spielzug möglich (unnötige Rechenlast)
 						count++;
 					}
 			}
