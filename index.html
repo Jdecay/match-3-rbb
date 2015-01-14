@@ -24,32 +24,152 @@
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
-        
+
+         
+
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Verbinde 3</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <p id='punkte_p' class="navbar-text navbar-right">Punkte: <a id="spielerPunkte" class="nolink">0</a></p>
-            <p id='spieler_p' class="navbar-text navbar-right" >Spieler: <a id="spielerName" class="link" onclick="neuerSpieler()">Gast</a></p>
-            <a class="btn btn-primary btn-lg" href="#" role="button" onclick="starteSpiel()">Start Game &raquo;</a>
-            <a class="btn btn-warning btn-lg" href="#" role="button" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a>
-                <span id="countdown" style="color: white;">
-                    Time left <b id="show-time">XXX</b> s        
-                </span>
-        </div><!--/.navbar-collapse -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <h4 class="navbar-text" id="navbar-text-left"><b>Verbinde 3</b></h4>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="#" onclick="starteSpiel()">Start Game &raquo;</a></li>
+		<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Extras <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#" data-toggle="modal" data-target="#spielEinstellungen" data-whatever="@mdo">Spieleinstellungen &raquo;</a></li>
+			<li class="divider"></li>
+            <li><a href="#" onclick="spielfeldPruefen()">Spielfeld Prüfen &raquo;</a></li>
+            <li class="divider"></li>
+			<li><a href="#" data-toggle="modal" data-target="#Spielregeln" data-whatever="@mdo">Spielregeln &raquo;</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+		<div class="navbar-text">
+			<div>
+				<label id="spielerName"></label>
+			</div>
+		</div>
+		<div class="navbar-text">
+			<div>
+				<label id="punkteStand"></label>
+			</div>
+		</diV>
+		
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!--Einstellungen-Modalbox-->
+
+<div class="modal fade" id="spielEinstellungen" tabindex="-1" role="dialog" aria-labelledby="spielEinstellungenLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">OK</span></button>
+        <h4 class="modal-title" id="spielEinstellungenLabel">Spieleinstellungen</h4>
       </div>
-    </nav>
+      <div class="modal-body">
+        <form role="form">
+          <div class="form-group">
+		  <table>
+		    <tr>
+				<td><label for="empfaenger-name" class="control-label">Reihen:</label></td>
+				<td><input min="6" max="36" class="rows" type="number" value="8"></td>
+			</tr>
+		  </table>
+          </div>
+          <div class="form-group">
+		  <table>
+		    <tr>
+				<td><label for="nachricht-text" class="control-label">Spalten:</label></td>
+				<td><input min="10" class="cols" type="number" value="12"></td>
+			</tr>
+			</table>
+          </div>
+		  <div class="form-group">
+		  <table>
+			<tr>
+				<td><label for="empfaenger-name" class="control-label">Anzahl Farben:</label></td>
+				<td><input min="2" max="9" class="blocks" type="number" value="4"></td>
+			</tr>
+		   </table>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="starteSpiel()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Spielregeln-Modalbox-->
+
+<div class="modal fade" id="Spielregeln" tabindex="-1" role="dialog" aria-labelledby="SpielregelnLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="SpielregelnLabel">Spielregeln</h4>
+      </div>
+      <div class="modal-body">
+        
+		
+		<ul>
+			<li>Spielziel: Mindestens 3 Steine der gleichen Farbe in eine Reihe bringen.</li>
+			<li>Spielablauf: Einen Stein auswählen</li>
+				<ol>
+					<li>Der Spieler wählt einen Stein.</li>
+					<li>Dieser Stein kann durch klicken auf ein Nachbarfeld mit diesem getauscht werden.</li>
+					<li>Wenn durch den Tausch eine Reihe von drei oder mehreren Steinen der gleichen Farbe entsteht, ist der Zug g&uuml;ltig und die Reihe wird gel&ouml;scht. </li>
+				</ol>
+			<li>Punktesystem:</li>
+				<ul>
+					<li>3er Combo = 450Pkt</li>
+					<li>4er Combo = 800Pkt</li>
+					<li>5er Combo = 1250Pkt</li>
+					<li>...</li>
+				</ul>
+			<li>Das Spiel dauert 90 Sekunden.</li>
+			
+			
+		</ul>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
   <!-- Block Oliver -->            
     <div id="neuerSpieler" class="modal fade">
@@ -57,43 +177,25 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Spielername</h4>
+            <h4 class="modal-title">Modal title</h4>
           </div>
           <div class="modal-body">
             <label class="control-label">Spieler:</label>
             <input type="text" class="form-control" id="nameInput">
           </div>
           <div class="modal-footer">
-            <button id="nameSpeichern" type="button" onclick='spielerErstellen()' class="btn btn-primary">OK</button>
+            <button id="nameSpeichern" type="button" class="btn btn-primary">OK</button>
           </div>
         </div>
       </div>
     </div>
 <!-- Ende Block Oliver -->
 
-<div id="gameOver" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Game Over!</h4>
-          </div>
-          <div class="modal-body">
-            <label class="control-label">Dein Punktestand: </label>
-            <label class="control-label" id="punkteStandBeiGameOver"></label>
-          </div>
-          <div class="modal-footer">
-            <button id="nameSpeichern" type="button" class="btn btn-primary" onclick="starteSpiel()">Neues Spiel..</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
 
     <!--Das Jumbotron Element in dem das Spielfeld dargestellt wird. -->
    
 
-    <div class="jumbotron">
+    <CENTER><div class="jumbotron">
         <div class="container">
         <!-- Hier wird das Spielfeld "angehangen" -->
         <div id="spielcontainer"></div>
@@ -102,8 +204,7 @@
 
         
       </div>
-      </div>
-
+    </div></CENTER>
 </div>
       <footer>
         <p>&copy; Oliver Barz,Sebastian Chwal, Erika Fischer,Bastian Köhler, Jan-David Kröger und Volkan Simsek 2014</p>

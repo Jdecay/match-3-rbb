@@ -3,13 +3,33 @@
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+body
+{
+	background-color: lightgrey;
+}
 
+td
+{
+	min-width: 150px;
+}
+   
+#navbar-text-left
+{
+	min-width: 20em;
+}
+
+.jumbotron
+{
+	text-align: center;
+	width: 95%;
+}
 
 .spielstein
 {
 	height: 32px;
 	width:32px;
 	display:inline-block;
+	background-color: black;
 }
 
 
@@ -18,7 +38,7 @@
 	display:inline-block;
 }
 
-.spielstein:hover
+.spielstein:hover img
 {
 	opacity: 0.8;
 }
@@ -34,27 +54,15 @@
 	background-color: green;
 }
 
-.selektiert
+.selektiert img
 {
-	opacity: 0.8;
+	opacity: 0.5;
+	
 }
 
 .row
 {
 	height: 32px;
-}
-
-.link, .link:hover
-{
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.nolink, .nolink:hover
-{
-    cursor: default;
-    color: grey;
-    text-decoration: none;
 }
 
 
