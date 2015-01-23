@@ -2,7 +2,8 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> 
+<html lang="en" class="no-js"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -25,7 +26,7 @@
     </head>
     <body>
 
-         
+      <!-- Block Erika & Bastian -->   
 
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -60,9 +61,10 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
-		<div class="navbar-text">
+		<div class="navbar-text" id='spieler_p'>
 			<div>
-				<label id="spielerName"></label>
+      <span>Spieler: </span>
+        <a id="spielerName" class="link" onclick="neuerSpieler()">Gast</a>
 			</div>
 		</div>
 		<div class="navbar-text">
@@ -70,7 +72,16 @@
 				<label id="punkteStand"></label>
 			</div>
 		</diV>
-		
+    <!-- Ende Erika & Bastian -->   
+
+
+    <!-- Oliver & Christian -->
+    <div class="navbar-text">
+      <div>
+        <span id="countdown">Time left <b id="show-time">XXX</b></span>
+      </div>
+    </diV>
+		<!-- Ende Oliver & Christian -->
         
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -78,6 +89,8 @@
 </nav>
 
 <!--Einstellungen-Modalbox-->
+<!-- Block Erika & Bastian -->   
+
 
 <div class="modal fade" id="spielEinstellungen" tabindex="-1" role="dialog" aria-labelledby="spielEinstellungenLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -130,9 +143,7 @@
         <h4 class="modal-title" id="SpielregelnLabel">Spielregeln</h4>
       </div>
       <div class="modal-body">
-        
-		
-		<ul>
+  		<ul>
 			<li>Spielziel: Mindestens 3 Steine der gleichen Farbe in eine Reihe bringen.</li>
 			<li>Spielablauf: Einen Stein auswählen</li>
 				<ol>
@@ -151,16 +162,6 @@
 			
 			
 		</ul>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
@@ -180,11 +181,15 @@
             <h4 class="modal-title">Modal title</h4>
           </div>
           <div class="modal-body">
+          <form id="spielernameForm">
             <label class="control-label">Spieler:</label>
             <input type="text" class="form-control" id="nameInput">
+            <span class="pull-right">
+             <button id="nameSpeichern" type="submit" for="spielernameForm" data-dismiss="modal" class="btn btn-primary" onclick='spielerErstellen()'>OK</button></span>
+          </form>
           </div>
           <div class="modal-footer">
-            <button id="nameSpeichern" type="button" class="btn btn-primary">OK</button>
+           
           </div>
         </div>
       </div>
@@ -192,10 +197,30 @@
 <!-- Ende Block Oliver -->
 
 
+<div id="gameOver" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Game Over!</h4>
+          </div>
+          <div class="modal-body">
+            <label class="control-label">Dein Punktestand: </label>
+            <label class="control-label" id="punkteStandBeiGameOver"></label>
+          </div>
+          <div class="modal-footer">
+            <button id="nameSpeichern" type="button" class="btn btn-primary" data-dismiss="modal" onclick="starteSpiel()">Neues Spiel..</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <!--Das Jumbotron Element in dem das Spielfeld dargestellt wird. -->
    
 
-    <CENTER><div class="jumbotron">
+<!--    <CENTER> -->
+    <div class="jumbotron">
         <div class="container">
         <!-- Hier wird das Spielfeld "angehangen" -->
         <div id="spielcontainer"></div>
@@ -204,10 +229,11 @@
 
         
       </div>
-    </div></CENTER>
+    </div>
+  <!--  </CENTER> -->
 </div>
       <footer>
-        <p>&copy; Oliver Barz,Sebastian Chwal, Erika Fischer,Bastian Köhler, Jan-David Kröger und Volkan Simsek 2014</p>
+        <p>&copy; Oliver Barz, Sebastian Chwal, Erika Fischer, Bastian Köhler, Jan-David Kröger und Volkan Simsek 2014</p>
       </footer>
       <script src="js/vendor/jquery-2.1.3.min.js"></script>
       <script src="js/vendor/bootstrap.min.js"></script>

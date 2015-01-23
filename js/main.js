@@ -819,14 +819,16 @@ function boolMovePossibilties(x, y, value, intPosib)
 function neuerSpieler() {
     $(document).ready(function() {
         $('#neuerSpieler').modal('show');
+        $('#neuerSpieler')
+
     });
 };
 
 function spielerErstellen() {           
     sp = new spieler("Gast", 0);
-    if($('#nameSpielerInput').val() != undefined)
+    if($('#nameInput').val() != undefined)
     {
-        sp.name = $('#nameSpielerInput').val();
+        sp.name = $('#nameInput').val();
     }
     console.log(sp);
     $('#spielerName').text(sp.name);
@@ -842,6 +844,7 @@ function spielerErstellen() {
 
 function punkteBerechnung(count) {
     var wert = (count * 100) / (2 / count)
+    console.log('Punkte = '+wert);
     sp.punkte += wert;
     var test = sp.punkte;
     //html highscore updaten 

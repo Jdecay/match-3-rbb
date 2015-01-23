@@ -54,6 +54,11 @@ td
 	background-color: green;
 }
 
+.selektiert
+{
+	opacity: 0.8;
+}
+
 .selektiert img
 {
 	opacity: 0.5;
@@ -65,9 +70,18 @@ td
 	height: 32px;
 }
 
+.link, .link:hover
+{
+    text-decoration: none;
+    cursor: pointer;
+}
 
-
-
+.nolink, .nolink:hover
+{
+    cursor: default;
+    color: grey;
+    text-decoration: none;
+}
 
 
 
