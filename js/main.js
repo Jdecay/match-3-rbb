@@ -17,15 +17,12 @@ function spielstein(x, y, value) {
     this.value = value;
     this.selected = false;
     this.flaggedForDeletion = false;
-    this.mydiv;
 
     this.select = function ()
     {
 
-
         console.warn(x + '/' + y);
 
-        console.log(this.spielstein.flaggedForDeletion);
 
         if (selektierterSpielstein)
         {
@@ -37,8 +34,18 @@ function spielstein(x, y, value) {
             {
                 console.log('Gleichen  Stein ausgewählt.');
             }
-            tausche(selektierterSpielstein, spielfeld[x][y]);
-            spielfeldAktualisieren();
+            if(moveIsvalid(selektierterSpielstein,spielfeld[x][y]))
+            {
+                tausche(selektierterSpielstein, spielfeld[x][y]);
+                spielfeldAktualisieren();
+            }
+            else
+            {
+                    console.log('Ungültiger Zug. Steine müssen nebeneinander liegen.');
+                        selektierterSpielstein = null;
+
+            }
+            
 
         }
         else
@@ -46,18 +53,20 @@ function spielstein(x, y, value) {
             // Bisher kein Stein selektiert, selektiere Stein.
             console.info('Selektierter Stein ist : ' + x + '/' + y);
             selektierterSpielstein = spielfeld[x][y];
-            selektierterSpielstein.mydiv.setAttribute('class', 'spielstein selektiert');
+
+            // tOdo div Element an position x/y selektieren
+            selektierterSpielstein.setMarked();
         }
-        spielfeldAusgeben();
+        // spielfeldAusgeben();
 
 
     }
 
     this.setMarked = function ()
     {
-        // console.log(this.mydiv);
-        this.mydiv.setAttribute('class', 'spielstein markiert');
-        // console.log(this.mydiv);
+        console.log('markiere Stein '+x+' / '+y);
+        console.log('#'+ x + '.d.' + y);
+         $('#'+ x + '.d.' + y).toggleClass('selektiert');
     }
 
     this.toString = function ()
@@ -161,34 +170,41 @@ function spielfeldZeichnen()
         }).appendTo("#spielcontainer");
 
 
-        for (var m = 0, n = spielfeld[k].length; m < n; m++)
+        for (var m = 0, n = spielfeld[k].length+2; m < n; m++)
         {
-
-
-            var div = document.createElement('div');
-
-            if (spielfeld[k][m].flaggedForDeletion === true)
+            //Erstes Element ist Randelement
+            if(m === 0 || m === spielfeld[k].length+1 )
             {
-                div.setAttribute('class', 'spielstein markiert');
+
+                var div = document.createElement('div');
+                // Rand is links
+                if(m === 0)
+                {
+                    div.setAttribute('class', 'rand_links');
+                }
+                else
+                {
+                    div.setAttribute('class', 'rand_rechts');
+
+                }
+                $(div).appendTo(row);
             }
             else
             {
-                div.setAttribute('class', 'spielstein');
+            //Normale Spielsteine
+            var div = document.createElement('div');
+            div.setAttribute('class', 'spielstein');
+            div.setAttribute('id', k + '.d.' +(m-1));
 
-            }
-            div.setAttribute('id', k + '.d.' + m);
-            div.spielstein = spielfeld[k][m];
-
-            spielfeld[k][m].mydiv = div;
             $(div).appendTo(row);
 
             // console.info(spielfeld[k][m].mydiv);
 
-            $(div).on("click", spielfeld[k][m].select);
+            $(div).on("click", spielfeld[k][m-1].select);
 
             // Farbe des Steins ermittlen und Bild anfügen
-            var farbe = spielsteine[spielfeld[k][m].value];
-            if (spielfeld[k][m].flaggedForDeletion)
+            var farbe = spielsteine[spielfeld[k][m-1].value];
+            if (spielfeld[k][m-1].flaggedForDeletion)
             {
                 console.info('Stein gelöscht');
                 farbe = leeresBild;
@@ -199,8 +215,8 @@ function spielfeldZeichnen()
             image.setAttribute('src', farbe);
 
 
-            image.setAttribute('id', k + '.i.' + m);
-            image.setAttribute('title', '[X : ' + spielfeld[k][m].x + ', Y : ' + spielfeld[k][m].y + ' ] Value :' + spielfeld[k][m].value);
+            image.setAttribute('id', k + '.i.' + (m-1));
+            image.setAttribute('title', '[X : ' + spielfeld[k][m-1].x + ', Y : ' + spielfeld[k][m-1].y + ' ] Value :' + spielfeld[k][m-1].value);
 
             $(image).appendTo(div);
             // var image = $('<img/>',{
@@ -210,7 +226,9 @@ function spielfeldZeichnen()
             // 	height : "32px"
             // }).appendTo(div);
 
-
+            
+                
+            }
 
 
             // console.log('#'+k+'.'+m);
@@ -231,6 +249,32 @@ function pruefeUmfeld(spielstein)
 {
     // Pruefe für jeden Spielstein in der Umgebung ob er der gleichen Farbe wie der übergebende Spielstein hat
     // Gib dann einen array aller umliegenden Spielsteine zurück
+}
+
+// Funktion die überprüft ob die beiden übergebenen Spielsteine nebeneinander liegen
+function moveIsvalid(spielstein1,spielstein2)
+    {
+    // x - Richtung darf um 1 abweichen
+    if(spielstein1.x + 1 === spielstein2.x && spielstein1.y === spielstein2.y)
+    {
+        return true;
+    } 
+    if(spielstein1.x - 1 === spielstein2.x && spielstein1.y === spielstein2.y)
+    {
+        return true;
+    }
+    // y - Richtung darf um 1 abweichen
+    if(spielstein1.y + 1 === spielstein2.y && spielstein1.x === spielstein2.x)
+    {
+        return true;
+    }
+    if(spielstein1.y -1 === spielstein2.y && spielstein1.x === spielstein2.x)
+    {
+        return true;
+    }
+
+    return false;
+    // Es darf aber nur ein Wert abweichen !! (Durch && erreicht)
 }
 
 

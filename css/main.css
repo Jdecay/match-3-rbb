@@ -29,7 +29,7 @@ td
 	height: 32px;
 	width:32px;
 	display:inline-block;
-	background-color: black;
+	background-image: url(../img/spielfeld/background.png);
 }
 
 
@@ -41,6 +41,24 @@ td
 .spielstein:hover img
 {
 	opacity: 0.8;
+}
+
+.rand_links
+{
+
+	height: 32px;
+	width:32px;
+	display:inline-block;
+	background-image: url(../img/spielfeld/side_left.png);
+}
+
+.rand_rechts
+{
+
+	height: 32px;
+	width:32px;
+	display:inline-block;
+	background-image: url(../img/spielfeld/side_right.png);
 }
 
 #spielcontainer
