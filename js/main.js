@@ -159,6 +159,37 @@ function spielfeldZeichnen()
     // Erstelle Spielfeld mithilfe jQuery
     // Durchlaufe jedes Element im Spielfeld Array 
 
+    // Oberen Rand erstellen
+     var row = $('<div/>', {
+            id: "toprow",
+            class: "row toprow"
+        }).appendTo("#spielcontainer");
+
+    // Eck-element OL 
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein ecke_ol');
+        $(div).appendTo(row);
+
+        // Oberen Rand
+       for (var k = 0, l = spielfeld[0].length; k < l; k++)
+    {
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein rand_oben');
+        $(div).appendTo(row);
+
+
+    } 
+
+        //Eck-element  OR
+
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein ecke_or');
+        $(div).appendTo(row);
+
+
+
+
+
     for (var k = 0, l = spielfeld.length; k < l; k++)
     {
 
@@ -169,6 +200,7 @@ function spielfeldZeichnen()
             class: "row"
         }).appendTo("#spielcontainer");
 
+        
 
         for (var m = 0, n = spielfeld[k].length+2; m < n; m++)
         {
@@ -180,11 +212,11 @@ function spielfeldZeichnen()
                 // Rand is links
                 if(m === 0)
                 {
-                    div.setAttribute('class', 'rand_links');
+                    div.setAttribute('class', 'spielstein rand_links');
                 }
                 else
                 {
-                    div.setAttribute('class', 'rand_rechts');
+                    div.setAttribute('class', 'spielstein rand_rechts');
 
                 }
                 $(div).appendTo(row);
@@ -243,6 +275,33 @@ function spielfeldZeichnen()
             // $(".spielstein").droppable();
         }
     }
+
+    // Unteren Rand erstellen
+     var row = $('<div/>', {
+            id: "botrow",
+            class: "row botrow"
+        }).appendTo("#spielcontainer");
+
+    // Eck-element OL 
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein ecke_ul');
+        $(div).appendTo(row);
+
+        // Oberen Rand
+       for (var k = 0, l = spielfeld[0].length; k < l; k++)
+    {
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein rand_unten');
+        $(div).appendTo(row);
+
+
+    } 
+
+        //Eck-element  OR
+
+        var div = document.createElement('div');
+        div.setAttribute('class','spielstein ecke_ur');
+        $(div).appendTo(row);
 }
 
 function pruefeUmfeld(spielstein)

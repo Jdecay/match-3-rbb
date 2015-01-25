@@ -12,7 +12,13 @@ td
 {
 	min-width: 150px;
 }
-   
+
+
+.row
+{
+	height: 32px;
+}
+
 #navbar-text-left
 {
 	min-width: 20em;
@@ -28,14 +34,15 @@ td
 {
 	height: 32px;
 	width:32px;
-	display:inline-block;
+	/*display:inline-block;*/
+	float:left;
 	background-image: url(../img/spielfeld/background.png);
 }
 
 
 .spielstein:nth-child(2n-1)
 {
-	display:inline-block;
+	/*display:inline-block;*/
 }
 
 .spielstein:hover img
@@ -45,20 +52,56 @@ td
 
 .rand_links
 {
-
-	height: 32px;
-	width:32px;
-	display:inline-block;
 	background-image: url(../img/spielfeld/side_left.png);
 }
 
 .rand_rechts
 {
 
-	height: 32px;
-	width:32px;
-	display:inline-block;
 	background-image: url(../img/spielfeld/side_right.png);
+}
+
+.ecke_ol
+{
+
+
+	background-image: url(../img/spielfeld/top_left.png);
+
+}
+
+.ecke_or
+{
+
+		background-image: url(../img/spielfeld/top_right.png);
+
+}
+
+.ecke_ul
+{
+		background-image: url(../img/spielfeld/bottom_left.png);
+}
+
+.ecke_ur
+{
+		background-image: url(../img/spielfeld/bottom_right.png);
+}
+
+.toprow
+{
+	height : 32px;
+}
+
+.rand_oben
+{
+	height : 32px;
+	background-image: url(../img/spielfeld/top.png);
+
+}
+
+.rand_unten
+{
+	height : 32px;
+	background-image: url(../img/spielfeld/bottom.png);
 }
 
 #spielcontainer
@@ -83,10 +126,7 @@ td
 	
 }
 
-.row
-{
-	height: 32px;
-}
+
 
 .link, .link:hover
 {
