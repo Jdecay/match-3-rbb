@@ -20,7 +20,7 @@ function spielstein(x, y, value) {
 
     this.select = function ()
     {
-
+        if(spielerEingabe){
         console.warn(x + '/' + y);
 
 
@@ -36,7 +36,8 @@ function spielstein(x, y, value) {
             }
             if(moveIsvalid(selektierterSpielstein,spielfeld[x][y]))
             {
-                tausche(selektierterSpielstein, spielfeld[x][y]);
+                spielerEingabe = false;
+                tausche(selektierterSpielstein, spielfeld[x][y],true);
                 spielfeldAktualisieren();
             }
             else
@@ -63,14 +64,17 @@ function spielstein(x, y, value) {
             selektierterSpielstein.setMarked();
         }
         // spielfeldAusgeben();
-
+    }else
+    {
+        console.warn("Spieler muss wartern.");
+    }
 
     }
 
     this.setMarked = function ()
     {
-        console.log('markiere Stein '+x+' / '+y);
-        console.log('#'+ x + '-d-' + y);
+        // console.log('markiere Stein '+x+' / '+y);
+        // console.log('#'+ x + '-d-' + y);
          $('#'+ x + '-d-' + y).toggleClass('selektiert');
     }
 
@@ -93,17 +97,21 @@ spielfeld = [];
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
-var anzahlSteine = 5;
+var anzahlSteine = 6;
 
 // Anzahl Reihen 
-var rows = 8;
+var rows = 12;
 
 // Anzahl Spalten
-var cols = 15;
+var cols = 20;
+
+var game;
 
 var initialisiert = false;
 
 var gameReady = false;
+
+var boardFull = false;
 
 var selektierterSpielstein;
 
@@ -114,6 +122,8 @@ var punkteStand = 0;
 var timer;
 
 var countInSeconds = 90;
+
+var spielerEingabe = false;
 
 //Der Spieler
 var sp;
@@ -128,16 +138,17 @@ function spielfeldInitialisieren()
     spielfeldZeichnen();
     console.log("Spielfeld erfolgreich erstellt.");
     initialisiert = true;
+    boardFull = true;
 }
 
 // Tauscht zwei übergebene Spielsteine auf dem Spielfeld
-function tausche(spielstein1, spielstein2)
+function tausche(spielstein1, spielstein2,spielertausch)
 {
-    console.info("Tausche Stein " + spielfeld[spielstein1.x][spielstein1.y].toString() + " mit Stein " + spielfeld[spielstein2.x][spielstein2.y].toString());
+    // console.info("Tausche Stein " + spielfeld[spielstein1.x][spielstein1.y].toString() + " mit Stein " + spielfeld[spielstein2.x][spielstein2.y].toString());
 
-    console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
-    console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
-    console.warn('getauscht');
+    // console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+    // console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
+    // console.warn('getauscht');
 
     // Erstelle Kopie von Spielstein 1 
     var copy = new spielstein(spielstein1.x, spielstein1.y, spielstein1.value);
@@ -151,11 +162,16 @@ function tausche(spielstein1, spielstein2)
     spielfeld[spielstein2.x][spielstein2.y].flaggedForDeletion = spielstein1.flaggedForDeletion;
 
 
-     console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
-     console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
+     // console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+     // console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
 
 
     selektierterSpielstein = null;
+
+    if(spielertausch)
+    {
+        startLoop();
+    }
 
 }
 
@@ -332,22 +348,25 @@ function pruefeReihe(array, isReihe)
     // Zählvariable
     var count = 1;
 
+    // gefundene Paar
+    var pairs = 0;
+
     //arrayAusgeben(array);
     // Prüfe für alle Felder im Array
     for (var i = 0, len = array.length; i < len; i++) {
-        if(isReihe)
-        {
-            console.info("Pruefe Reihe");
-        }
-        else
-        {
-            console.info("Pruefe Spalte");
+        // if(isReihe)
+        // {
+        //     console.info("Pruefe Reihe");
+        // }
+        // else
+        // {
+        //     console.info("Pruefe Spalte");
 
-        }
+        // }
         // Falls kein Feld besucht wurde, setze Feld auf aktuelles Feld und gehe eins weiter
         if (saved === undefined)
         {
-            console.info('pruefeReihe saved === undefined');
+            // console.info('pruefeReihe saved === undefined');
             saved = array[i];
         }
         //Falls bereits ein Feld besucht wurde, vergleiche aktuelles mit gespeichertem Feld
@@ -358,7 +377,7 @@ function pruefeReihe(array, isReihe)
             {
                 // Feld ist gleich, erhöhe Zählvariable
                 count++;
-                console.info('Feld' + saved.toString() + ' und ' + array[i].toString() + ' sind gleich');
+                // console.info('Feld' + saved.toString() + ' und ' + array[i].toString() + ' sind gleich');
 
                 // Pruefe ob letztes Element des arrays
                 if (i + 1 === len)
@@ -366,13 +385,14 @@ function pruefeReihe(array, isReihe)
                     // Falls mehr als drei Elemente, markiere Elemente
                     if (count >= 3) {
                         
-                    if(saved.flaggedForDeletion == false){
+                    if(saved.flaggedForDeletion === false){
                         punkteBerechnung(count);
                     }
-
-                        console.log(count + ' gefunden.Letztes Element.');
+                        pairs++;
+                        // console.log(count + ' gefunden.Letztes Element.');
                         var position = array.indexOf(saved);
                         markiereSteine(saved.x, saved.y, isReihe, count);
+
                     }
 
                 }
@@ -388,6 +408,7 @@ function pruefeReihe(array, isReihe)
                     if(saved.flaggedForDeletion == false){
                         punkteBerechnung(count);
                     }
+                    pairs++;
                     
                     // Mehr als drei Felder gleicher Farbe hintereinander wurden gefunden
                     // Durchlaufe alle Felder und setze diese auf destroyable
@@ -400,17 +421,7 @@ function pruefeReihe(array, isReihe)
                     var position = array.indexOf(saved);
 
                     markiereSteine(saved.x, saved.y, isReihe, count);
-
-
-
-
-
-
                     count = 1;
-
-
-
-
                 }
                 // Weniger als 3 Felder gleicher Farbe wurden gefunden
                 else
@@ -426,13 +437,14 @@ function pruefeReihe(array, isReihe)
 
     }
     arrayAusgeben(array);
+    return pairs;
 
 }
 
 function markiereSteine(posX, posY, isReihe, count)
 {
-    console.log(count + ' gefunden.');
-    console.log('Starte von stein ' + spielfeld[posX][posY].toString() + ' Reihe :' + isReihe);
+    // console.log(count + ' gefunden.');
+    // console.log('Starte von stein ' + spielfeld[posX][posY].toString() + ' Reihe :' + isReihe);
 
     for (var k = 0; k < count; k++)
     {
@@ -462,13 +474,13 @@ function unMarkAll()
 function spielfeldPruefen()
 {
     // spielfeldAusgeben();
-
+    var foundMatches = 0;
     // Reihen überprüfen
     for (var i = 0; i < cols; i++)
     {
         // console.log('Pruefe Reihe '+i);
         // console.log(spielfeld[i],true);
-        pruefeReihe(spielfeld[i], true);
+        foundMatches += pruefeReihe(spielfeld[i], true);
     }
 
     // Spalten überprüfen
@@ -476,30 +488,56 @@ function spielfeldPruefen()
     {
         // console.log('Pruefe Spalte '+i);
         // console.log(getSpalte(i),false);
-        pruefeReihe(getSpalte(i), false);
+        foundMatches += pruefeReihe(getSpalte(i), false);
 
     }
+
+    if(foundMatches === 0)
+        {
+            console.log("Keine Paare gefunden.Spielfeld ist bereit");
+            boardFull = true;
+        }
+
+        else
+        {
+           console.log("spielfeldPruefen hat "+foundMatches+" Paare gefunden");
+           boardFull = false;
+
+        }
     // spielfeldAusgeben();
 }
 
 function spielfeldAuffuellen()
 {
+    var emptyFields = 0;
     // Pruefe ob die oberste Reihe 'leere' Felder hat
     // Falls ja, fülle diese
-    for (var i = spielfeld.length - 1; i >= 0; i--) {
+    for (var i = 0; i < rows; i++) {
 
         if (spielfeld[0][i].flaggedForDeletion)
         {
             console.info('Leeres Feld gefunden. Fülle auf.')
-            spielfeld[0][i] = new spielstein(0, i, getRandomInt(0, 8))
+            spielfeld[0][i] = new spielstein(0, i, getRandomInt(0, 8));
+            emptyFields++;
         }
 
     }
-    ;
 
+    if(emptyFields === 0)
+    {
+        console.info("Spielfeld ist voll");
+        boardFull = true;
 
+    }
+    else
+    {
+
+        console.info("Reihe mit "+emptyFields+" gefüllt.");
+    }
 
 }
+
+
 
     //-- countdown part begins --
         var updateTime = countInSeconds;
@@ -543,7 +581,7 @@ function arrayAusgeben(array)
         {
             werte.push(array[i].value);
         }
-        console.info(werte);
+        // console.info(werte);
     }
     else
     {
@@ -613,6 +651,7 @@ function ladeBilder()
 // Funktion die den Spielstart realisiert
 function starteSpiel()
 {
+
     if (!initialisiert)
     {
 
@@ -622,21 +661,13 @@ function starteSpiel()
         // Spielfeld initialisieren
         spielfeldInitialisieren();
 
-        // Auf 3 Prüfen
-        // spielfeldPruefen();
-
-        // Felder löschen
-        // spielsteineEntfernen()
-
-        // Neue Steine anfügen
-        
 
         // Neuer Spieler "Default"
         spielerErstellen();
-        // Starte Timer
+
+
+        startLoop();
         startTimer();
-
-
     }
     else
     {
@@ -644,9 +675,86 @@ function starteSpiel()
         unMarkAll();
         neuesSpielfeld();
         spielfeldAktualisieren();
-        startTimer();
+        startLoop();
+         startTimer();
     }
 
+
+ 
+}
+
+function startLoop()
+{
+  game =  setInterval(function(){GameLoop();},100);
+}
+
+
+function stopLoop()
+{
+    clearInterval(game);
+}
+
+// Die Spiel Schleife des Spiels die 3-er Felder markiert und beendet wird sobald das Spielfeld bereit ist (Spielstart und Nach Benutzereingabe)
+function GameLoop()
+{
+
+    // Spielfeld zeichnen
+    spielfeldAktualisieren();
+
+    // Falls Spielfeld bereit ist
+    if(boardFull)
+    {
+    // Spielfeld auf '3' prüfen
+    console.log("Spielfeld voll, prüfe auf 3");
+    spielfeldPruefen();
+    }
+    else
+    {
+        // Steine bewegen
+    moveBlocks();
+
+    while(!boardFull)
+    {
+    // Spielfeld auffuellen
+        fuellen();
+    }
+
+    }
+    spielfeldPruefen();
+    if(boardFull)
+    {
+        // Spielfeld ist bereit
+        // Gucken ob es mögliche Züge gibt
+         if(!CheckMovePossible())
+            {
+                console.warn("Kein Zug mehr möglich");
+                neuesSpielfeld();
+            }
+        else
+            {
+                console.warn("Warte auf Benutzereingabe");
+                stopLoop();
+                spielerEingabe = true;
+            }
+    }
+    
+
+
+
+    // Nichts tun und GameLoop weiter laufen lassen
+
+    // Spielzug möglich ?
+       
+
+
+
+}
+
+function fuellen()
+{
+    moveBlocks();
+    spielfeldAktualisieren();
+    spielfeldAuffuellen();
 }
 
 // Funktion die ein neues Spielfeld per RNG generiert.
@@ -691,7 +799,7 @@ function spielfeldAktualisieren()
         {
             // Erfasse Spielstein Wert
             // var farbe = spielfeld[j][i].value;
-             console.log("Value an "+i+" "+j+" = "+spielfeld[i][j].value);
+             // console.log("Value an "+i+" "+j+" = "+spielfeld[i][j].value);
 
             var divId = "#"+i+"-d-"+j;
             // Selektiere entsprechendes Div
@@ -713,14 +821,14 @@ function spielfeldAktualisieren()
             image.setAttribute('title', '[X : ' + spielfeld[i][j].x + ', Y : ' + spielfeld[i][j].y + ' ] Value :' + spielfeld[i][j].value);
 
             $(image).appendTo(div);
-            console.log()
+            // console.log()
 
             // ändere image des divs
             
         }
 
     }
-    spielfeldAusgeben();
+    // spielfeldAusgeben();
 
 }
 
@@ -743,7 +851,7 @@ function moveBlocks()
     // Für jede Reihe (von unten nach oben) (ausser der obersten reihe)
    for (var j = cols-1; j > 0; j--)
         {
-            console.log("Bewege Reihe "+j);
+            // console.log("Bewege Reihe "+j);
             for (var i = 0; i < rows; i++)
             {
              // Für Anzahl Reihen
@@ -753,27 +861,21 @@ function moveBlocks()
             var isEmpty = spielfeld[j][i].flaggedForDeletion;
             
             // Wenn ja, tausche mich mit Feld über mir
-            if(isEmpty)
-            {
-                tausche(spielfeld[j][i],spielfeld[j-1][i]);
-            }
-            // Wenn nein, tue nichts
-            else
-            {
+                if(isEmpty)
+                {
+                    tausche(spielfeld[j][i],spielfeld[j-1][i]);
+                    boardFull = false;
+                }
+                // Wenn nein, tue nichts
+                else
+                {
 
-            }
+                }
 
 
+             }
         }
-    }
-
-
-
-   
-
-
-
-
+    spielfeldAktualisieren();
 
 }
 
@@ -786,32 +888,36 @@ function moveBlocks()
 function CheckMovePossible()
 {
 //Ausgegangen wird davon das kein Spielstein für die Löschung markiert ist
-var count = 0; //Variable zählt mögliche Spielzüge
+//Variable zählt mögliche Spielzüge
+var count = 0; 
+
 //Durchgang Reihe
 for (var xi=0;xi<=cols-1;xi++)
-{
+    {
 
-for(var yi=0;yi<=rows-1;yi++)
-{
+    for(var yi=0;yi<=rows-1;yi++)
+        {
 
-for(pi=1;pi<=4;pi++)
-{
-if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
-{
-console.log("Spielzug möglich an Position : ["+xi+"]["+yi+"]");
-count++;
-}
-}
-}
-}
-if(count == 0)
-{
-console.log("Kein Spielzug möglich!");
-}
-else
-{
-console.log(count.toString()+" Spielzüge möglich");
-}
+            for(pi=1;pi<=4;pi++)
+            {
+                if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
+                    {
+                        console.log("Spielzug möglich an Position : ["+xi+"]["+yi+"]");
+                        count++;
+                    }
+                }
+            }
+        }
+    if(count === 0)
+    {
+        console.log("Kein Spielzug möglich!");
+        return false;
+    }
+    else
+    {
+        console.log(count.toString()+" Spielzüge möglich");
+        return true;
+    }
 }
 
 function boolMovePossibilties(x, y, value, intPosib)
@@ -994,7 +1100,7 @@ function punkteBerechnung(count) {
     //html highscore updaten 
     $(document).ready(function ()
     {
-        $("#spielerPunkte").text(test);
+        $("#spieler_punkte").text("Punkte : "+test);
     });
 }
 
@@ -1020,18 +1126,3 @@ $(".rows").change(function () {
 
 //######################### Volkans Block Ende ############################//
 
-// Die Spiel Schleife des Spiels
-function GameLoop()
-{
-    // Spielfeld erstellen
-
-    // Spielfeld zeichnen
-
-    // Spielfeld auf '3' prüfen
-
-    // Felder löschen
-
-    // Spielzug möglich ?
-
-
-}

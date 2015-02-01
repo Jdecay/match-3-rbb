@@ -50,16 +50,7 @@
         <li>
           <a href="#" onclick="starteSpiel()">Start Game &raquo;</a>
         </li>
-        <li>
-        <a href="#" onclick="spielfeldPruefen()">Spielfeld Prüfen</a>
-        </li>
-        <li>
-        <a href="#" onclick="moveBlocks()">Move Blocks</a>
-        </li>
-        <li>
-        <a href="#" onclick="spielfeldAktualisieren()">Aktualisieren</a>
-        </li>
-		    <li class="dropdown">
+        <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Extras <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="#" data-toggle="modal" data-target="#spielEinstellungen">Spieleinstellungen &raquo;</a></li>
@@ -75,7 +66,10 @@
 		<div class="navbar-text" id='spieler_p'>
       <span>Spieler: </span>
         <a id="spielerName" class="link" onclick="neuerSpieler()">Gast</a>
-		</div>
+    </div>
+    <div class="navbar-text" id='spieler_punkte'>
+      <span>Punkte: </span>
+    </div>
 		<div class="navbar-text">
 			<div>
 				<label id="punkteStand"></label>
