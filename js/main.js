@@ -42,8 +42,13 @@ function spielstein(x, y, value) {
             else
             {
                     console.log('Ungültiger Zug. Steine müssen nebeneinander liegen.');
-                        selektierterSpielstein = null;
+                    
+                    
+                    // Steine wackeln lassen.
+                     $('#'+ x + '.d.' + y).effect( "shake" );
+                     $('#'+ selektierterSpielstein.x + '.d.' + selektierterSpielstein.y).effect( "shake" );
 
+                    selektierterSpielstein = null;
             }
             
 
@@ -929,9 +934,14 @@ function neuerSpieler() {
 
 function spielerErstellen() {           
     sp = new spieler("Gast", 0);
-    if($('#nameInput').val() != undefined)
+    if($('#nameInput').val().length <= 0)
+    {
+        console.log("Keinen Spielername eingegeben");
+    }
+    else
     {
         sp.name = $('#nameInput').val();
+
     }
     console.log(sp);
     $('#spielerName').text(sp.name);
