@@ -76,7 +76,7 @@ function spielstein(x, y, value) {
 
     this.toString = function ()
     {
-        return '[' + x + ',' + y + ']';
+        return '[' + x + ',' + y + '('+this.flaggedForDeletion+')]';
     }
 
 
@@ -144,14 +144,15 @@ function tausche(spielstein1, spielstein2)
 
     // Tausche Spielstein 1 mit Spielstein 2
     spielfeld[spielstein1.x][spielstein1.y] = new spielstein(spielstein1.x, spielstein1.y, spielstein2.value);
-    spielfeld[spielstein1.x][spielstein1.y].flaggedForDeletion = spielstein1.flaggedForDeletion;
+    spielfeld[spielstein1.x][spielstein1.y].flaggedForDeletion = spielstein2.flaggedForDeletion;
+
     // Ersetze Spielstein
     spielfeld[spielstein2.x][spielstein2.y] = new spielstein(spielstein2.x, spielstein2.y, spielstein1.value);
-    spielfeld[spielstein2.x][spielstein2.y].flaggedForDeletion = spielstein2.flaggedForDeletion;
+    spielfeld[spielstein2.x][spielstein2.y].flaggedForDeletion = spielstein1.flaggedForDeletion;
 
 
-    // console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
-    // console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
+     console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
+     console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
 
 
     selektierterSpielstein = null;
@@ -449,8 +450,6 @@ function markiereSteine(posX, posY, isReihe, count)
             spielfeld[posX + k][posY].flaggedForDeletion = true;
             spielfeld[posX + k][posY].setMarked();
         }
-
-
     }
 }
 
@@ -714,11 +713,6 @@ function spielfeldAktualisieren()
             image.setAttribute('title', '[X : ' + spielfeld[i][j].x + ', Y : ' + spielfeld[i][j].y + ' ] Value :' + spielfeld[i][j].value);
 
             $(image).appendTo(div);
-
-
-
-
-
             console.log()
 
             // ändere image des divs
@@ -746,58 +740,41 @@ $(document).ready(function ()
 
 function moveBlocks()
 {
-    // //Ausgegangen wird davon das Spielzug abgeschlossen ist und Steine zur Löschung markiert sind
-    // console.info('Moving Blocks');
-    // //Durchgang Reihe
-    // for (var yi=rows-1;yi>=0;yi--)
-    // {
-    //     for(var xi=0;xi<cols;xi++)
-    //     {
-    //         if(spielfeld[xi][yi].flaggedForDeletion)
-    //         {
-    //             for(ny=yi+1;ny===0;ny--) //ny steht für neues Y also der Block der runterrutschen soll
-    //             {
-    //                  spielfeld[xi][ny-1].value = spielfeld[xi][ny].value;
-    //             }
-    //             spielfeld[0][yi].value = getRandomInt(0,anzahlSteine) //obere leere Felder kriegen neuen zuf. Wert zugeordnet
-    //         }
-    //     }
-    // }
-
-    //Temporäre testvars
-
-    var zaehler = 0;
-    var position;
-    // Prüfe für jede Sppalte
-    for(var y = rows-1; y>=0; y--)
-    {
-        position = null;
-        for(var x = cols-1; x >= 0 && position >=0; x--)
+    // Für jede Reihe (von unten nach oben) (ausser der obersten reihe)
+   for (var j = cols-1; j > 0; j--)
+        {
+            console.log("Bewege Reihe "+j);
+            for (var i = 0; i < rows; i++)
             {
-            if(x === cols-1 && spielfeld[x][y].flaggedForDeletion)
-                {
-                position = x;
-                }
-            else if(x<=cols-1 && spielfeld[x][y].flaggedForDeletion && !spielfeld[x+1][y].flaggedForDeletion)
-                {  //tritt ein wenn aktuelles feld leer ist und das Feld davor ein Block und es nicht die unterste Reihe ist
-                position = x;
-                }   
-             else if(!spielfeld[x][y].flaggedForDeletion && position!=null)
-                {
-                console.log(position);
-                tausche(spielfeld[position][y],spielfeld[x][y]);
-                position--;
-                }
-            }
-        if (position != null)
+             // Für Anzahl Reihen
+        
+            //Prüfe für jedes Element 
+            // Bin ich zum löschen markiert ?
+            var isEmpty = spielfeld[j][i].flaggedForDeletion;
+            
+            // Wenn ja, tausche mich mit Feld über mir
+            if(isEmpty)
             {
-            for(var i = position; i>=0; i--)
-                {
-                console.log("4");
-                spielfeld[i][y].value = getRandomInt(0,anzahlSteine);
-                }
+                tausche(spielfeld[j][i],spielfeld[j-1][i]);
             }
+            // Wenn nein, tue nichts
+            else
+            {
+
+            }
+
+
         }
+    }
+
+
+
+   
+
+
+
+
+
 }
 
 
