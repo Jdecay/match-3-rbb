@@ -12,17 +12,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
-        <style>
-            body {
-                padding-top: 50px;
-                padding-bottom: 20px;
-            }
-        </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
         <link rel="stylesheet" href="css/main.css">
-
+        <script src="js/vendor/jquery-2.1.3.min.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/jquery-ui.min.js"></script>
+        <script src="js/main.js"></script>
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="js/vendor/howler.min.js"></script>
     </head>
     <body>
 
@@ -48,7 +46,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li>
-          <a href="#" onclick="starteSpiel()">Start Game &raquo;</a>
+          <a href="#" onclick="starteSpiel()">Neues Spiel starten &raquo;</a>
         </li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Extras <span class="caret"></span></a>
@@ -59,6 +57,9 @@
             <li class="divider"></li>
 			<li><a href="#" data-toggle="modal" data-target="#Spielregeln">Spielregeln &raquo;</a></li>
           </ul>
+        </li>
+        <li>
+          <a href="#" id="music_toggle" onclick="toggleMusic()">Musik</a>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -107,31 +108,31 @@
           <div class="form-group">
 		  <table>
 		    <tr>
-				<td><label for="empfaenger-name" class="control-label">Reihen:</label></td>
-				<td><input min="6" max="36" class="rows" type="number" value="8"></td>
+				<td><label for="bdef_reihen" class="control-label">Reihen:</label></td>
+				<td><input min="6" max="36" id="bdef_reihen" class="rows" type="number" value="8"></td>
 			</tr>
 		  </table>
           </div>
           <div class="form-group">
 		  <table>
 		    <tr>
-				<td><label for="nachricht-text" class="control-label">Spalten:</label></td>
-				<td><input min="10" class="cols" type="number" value="12"></td>
+				<td><label for="bdef_spalten" class="control-label">Spalten:</label></td>
+				<td><input min="10"  id="bdef_spalten" class="cols" type="number" value="12"></td>
 			</tr>
 			</table>
           </div>
 		  <div class="form-group">
 		  <table>
 			<tr>
-				<td><label for="empfaenger-name" class="control-label">Anzahl Farben:</label></td>
-				<td><input min="2" max="9" class="blocks" type="number" value="4"></td>
+				<td><label for="bdef_colours" class="control-label">Anzahl Farben:</label></td>
+				<td><input min="2" max="9" id="bdef_colours" class="blocks" type="number" value="4"></td>
 			</tr>
 		   </table>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="starteSpiel()">OK</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="starteBenutzerdefiniertesSpiel()">OK</button>
       </div>
     </div>
   </div>
@@ -161,9 +162,7 @@
 					<li>5er Combo = 1250Pkt</li>
 					<li>...</li>
 				</ul>
-			<li>Das Spiel dauert 90 Sekunden.</li>
-			
-			
+			<li>Das Spiel dauert 90 Sekunden.</li>	
 		</ul>
       </div>
       <div class="modal-footer">
@@ -187,7 +186,6 @@
           <form id="spielernameForm">
             <label class="control-label">Spieler:</label>
             <input type="text" class="form-control" id="nameInput">
-        
           </form>
           </div>
           <div class="modal-footer">
@@ -223,11 +221,12 @@
    
 
 <!--    <CENTER> -->
-    <div class="jumbotron center">
-        <div class="container">
+<div class="container">
+    <div class="jumbotron">
+        
         <!-- Hier wird das Spielfeld "angehangen" -->
         <CENTER>
-        <div id="spielcontainer"></div>
+        <div class="container vertical-center" id="spielcontainer"></div>
         </CENTER>
         <br>
 
@@ -239,9 +238,6 @@
       <footer>
         <p>&copy; Oliver Barz, Sebastian Chwal, Erika Fischer, Bastian Köhler, Jan-David Kröger und Volkan Simsek 2014</p>
       </footer>
-      <script src="js/vendor/jquery-2.1.3.min.js"></script>
-      <script src="js/vendor/bootstrap.min.js"></script>
-      <script src="js/vendor/jquery-ui.min.js"></script>
-      <script src="js/main.js"></script>
+      
     </body>
 </html>

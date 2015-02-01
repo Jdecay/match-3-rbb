@@ -76,6 +76,9 @@ function spielstein(x, y, value) {
         // console.log('markiere Stein '+x+' / '+y);
         // console.log('#'+ x + '-d-' + y);
          $('#'+ x + '-d-' + y).toggleClass('selektiert');
+         if(gameReady){
+         pop();
+            }
     }
 
     this.toString = function ()
@@ -127,6 +130,12 @@ var spielerEingabe = false;
 
 //Der Spieler
 var sp;
+
+var musicPlayer;
+
+var soundeffects = ['soundeffects/pop.ogg'];
+
+var music = ['music/doodle.mp3'];
 
 // Platz für Methoden
 
@@ -385,7 +394,7 @@ function pruefeReihe(array, isReihe)
                     // Falls mehr als drei Elemente, markiere Elemente
                     if (count >= 3) {
                         
-                    if(saved.flaggedForDeletion === false){
+                    if(saved.flaggedForDeletion === false && gameReady){
                         punkteBerechnung(count);
                     }
                         pairs++;
@@ -405,7 +414,7 @@ function pruefeReihe(array, isReihe)
                 if (count >= 3)
                 {
                     //für Punkte Rechnung
-                    if(saved.flaggedForDeletion == false){
+                    if(saved.flaggedForDeletion == false && gameReady){
                         punkteBerechnung(count);
                     }
                     pairs++;
@@ -651,6 +660,7 @@ function ladeBilder()
 // Funktion die den Spielstart realisiert
 function starteSpiel()
 {
+    gameReady = false;
 
     if (!initialisiert)
     {
@@ -665,7 +675,7 @@ function starteSpiel()
         // Neuer Spieler "Default"
         spielerErstellen();
 
-
+        playMusic();
         startLoop();
         startTimer();
     }
@@ -678,9 +688,13 @@ function starteSpiel()
         startLoop();
          startTimer();
     }
+}
 
-
- 
+function starteBenutzerdefiniertesSpiel()
+{
+    rows = $('#bdef_reihen').val();
+    cols = $('#bdef_spalten').val();
+    starteSpiel();
 }
 
 function startLoop()
@@ -734,6 +748,7 @@ function GameLoop()
             {
                 console.warn("Warte auf Benutzereingabe");
                 stopLoop();
+                gameReady = true;
                 spielerEingabe = true;
             }
     }
@@ -837,11 +852,54 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Abschnitt Musik und Soundeffeckte
+
+function playMusic()
+{
+    musicPlayer = new Howl({
+        urls : ['music/doodle.mp3'],
+        loop: true,
+        volume: 0.5
+    }).fadeIn(0.5, 5000);
+
+  //   var sound = new Howl({
+  // urls: ['sound.mp3']
+// }).play();
+}
+
+function toggleMusic()
+{
+    if(musicPlayer)
+    {
+        musicPlayer.stop();
+        musicPlayer = "";
+        console.log("Musik gestoppt.");
+        $('#music_toggle').toggleClass('striketrough');
+    }
+    else
+    {
+        playMusic();
+        console.log("Musik gestartet.");
+    }
+}
+
+
+
+function pop()
+{
+    var pop = new Howl({
+        urls : ['sounds/pop.ogg']
+    }).play();
+
+}
+
 // Funktion die aufgerufen wird sobald die Seite geladen wurde.
 $(document).ready(function ()
 {
-    //starteSpiel();
+    starteSpiel();
 });
+
+
 
 //######################### Martins Block Start ############################//
 
@@ -1069,6 +1127,10 @@ function neuerSpieler() {
     });
 };
 
+$('#spielernameForm').on('submit', function(event){
+    event.preventDefault();
+});
+
 function spielerErstellen() {           
     sp = new spieler("Gast", 0);
     if($('#nameInput').val().length <= 0)
@@ -1082,7 +1144,7 @@ function spielerErstellen() {
     }
     console.log(sp);
     $('#spielerName').text(sp.name);
-    $('#spielerPunkte').text(sp.punkte);
+    $('#spieler_punkte').text(sp.punkte);
     console.log(sp.punkte);
     $('#neuerSpieler').modal('hide');
 }
