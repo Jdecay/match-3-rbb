@@ -45,9 +45,9 @@ function spielstein(x, y, value) {
                     
                     
                     // Steine wackeln lassen.
-                     $('#'+ x + '.d.' + y).effect( "shake" );
-                     $('#'+ selektierterSpielstein.x + '.d.' + selektierterSpielstein.y).effect( "shake" );
-
+                    spielfeld[x][y].setMarked();
+                    $('.selektiert').effect( "shake" );
+                    unMarkAll();
                     selektierterSpielstein = null;
             }
             
@@ -70,8 +70,8 @@ function spielstein(x, y, value) {
     this.setMarked = function ()
     {
         console.log('markiere Stein '+x+' / '+y);
-        console.log('#'+ x + '.d.' + y);
-         $('#'+ x + '.d.' + y).toggleClass('selektiert');
+        console.log('#'+ x + '-d-' + y);
+         $('#'+ x + '-d-' + y).toggleClass('selektiert');
     }
 
     this.toString = function ()
@@ -134,13 +134,12 @@ function spielfeldInitialisieren()
 function tausche(spielstein1, spielstein2)
 {
     console.info("Tausche Stein " + spielfeld[spielstein1.x][spielstein1.y].toString() + " mit Stein " + spielfeld[spielstein2.x][spielstein2.y].toString());
-    // console.info(spielfeld[spielstein1.x][spielstein1.y]);
-    // console.info(spielfeld[spielstein2.x][spielstein2.y]);
 
     console.info(spielfeld[spielstein1.x][spielstein1.y].toString());
     console.info(spielfeld[spielstein2.x][spielstein2.y].toString());
     console.warn('getauscht');
-    // Erstlle Kopie von Spielstein 1 
+
+    // Erstelle Kopie von Spielstein 1 
     var copy = new spielstein(spielstein1.x, spielstein1.y, spielstein1.value);
 
     // Tausche Spielstein 1 mit Spielstein 2
@@ -231,7 +230,7 @@ function spielfeldZeichnen()
             //Normale Spielsteine
             var div = document.createElement('div');
             div.setAttribute('class', 'spielstein');
-            div.setAttribute('id', k + '.d.' +(m-1));
+            div.setAttribute('id', k + '-d-' +(m-1));
 
             $(div).appendTo(row);
 
@@ -252,32 +251,13 @@ function spielfeldZeichnen()
             image.setAttribute('src', farbe);
 
 
-            image.setAttribute('id', k + '.i.' + (m-1));
+            image.setAttribute('id', k + '-i-' + (m-1));
             image.setAttribute('title', '[X : ' + spielfeld[k][m-1].x + ', Y : ' + spielfeld[k][m-1].y + ' ] Value :' + spielfeld[k][m-1].value);
 
             $(image).appendTo(div);
-            // var image = $('<img/>',{
-            // 	src:  farbe,
-            // 	id: k+'.i.'+m,
-            // 	width : "32px",
-            // 	height : "32px"
-            // }).appendTo(div);
-
-            
                 
             }
 
-
-            // console.log('#'+k+'.'+m);
-
-            // Eher unnötig
-
-
-            // $(".spielstein").draggable(
-            // 	{
-            // 		containment: "#spielcontainer"
-            // 	});
-            // $(".spielstein").droppable();
         }
     }
 
@@ -354,7 +334,15 @@ function pruefeReihe(array, isReihe)
     //arrayAusgeben(array);
     // Prüfe für alle Felder im Array
     for (var i = 0, len = array.length; i < len; i++) {
+        if(isReihe)
+        {
+            console.info("Pruefe Reihe");
+        }
+        else
+        {
+            console.info("Pruefe Spalte");
 
+        }
         // Falls kein Feld besucht wurde, setze Feld auf aktuelles Feld und gehe eins weiter
         if (saved === undefined)
         {
@@ -436,7 +424,7 @@ function pruefeReihe(array, isReihe)
 
 
     }
-    //arrayAusgeben(array);
+    arrayAusgeben(array);
 
 }
 
@@ -462,17 +450,13 @@ function markiereSteine(posX, posY, isReihe, count)
             spielfeld[posX + k][posY].setMarked();
         }
 
-        //TODO STEINE MARKIEREnn
-        // console.log("Markiere Stein : ["+array[startposition+k].x+' / '+array[startposition+k].y+']');
-        // console.log(array[i-count]);
-        // array[position+k].flaggedForDeletion = true;
-        // array[position+k].setMarked();
-        // console.log(array[i-count]);
 
     }
+}
 
-
-
+function unMarkAll()
+{
+    $('.selektiert').removeClass('selektiert');
 
 }
 
@@ -497,7 +481,6 @@ function spielfeldPruefen()
 
     }
     // spielfeldAusgeben();
-    spielfeldAktualisieren();
 }
 
 function spielfeldAuffuellen()
@@ -518,7 +501,6 @@ function spielfeldAuffuellen()
 
 
 }
-
 
     //-- countdown part begins --
         var updateTime = countInSeconds;
@@ -553,6 +535,7 @@ function stopTimer()
 {
     clearInterval(timer); 
 }
+
 function arrayAusgeben(array)
 {
     if (array != undefined) {
@@ -659,6 +642,7 @@ function starteSpiel()
     else
     {
         selektierterSpielstein = null;
+        unMarkAll();
         neuesSpielfeld();
         spielfeldAktualisieren();
         startTimer();
@@ -698,14 +682,52 @@ function neuesSpielfeld()
 function spielfeldAktualisieren()
 {
     console.info('Aktualisiere Spielfeld.');
+    unMarkAll();
+    // Jedes Feld durchlaufen und image aktualisieren
+     //Für Anzahl Spalten
+    for (var i = 0; i < cols; i++)
+    {
+        // Für Anzahl Reihen
+        for (var j = 0; j < rows; j++)
+        {
+            // Erfasse Spielstein Wert
+            // var farbe = spielfeld[j][i].value;
+             console.log("Value an "+i+" "+j+" = "+spielfeld[i][j].value);
 
-    //Spielfeld löschen
-    $('#spielcontainer').empty();
+            var divId = "#"+i+"-d-"+j;
+            // Selektiere entsprechendes Div
+            var div = $(divId).empty();
+
+             // Farbe des Steins ermittlen und Bild anfügen
+            var farbe = spielsteine[spielfeld[i][j].value];
+
+            
+            if (spielfeld[i][j].flaggedForDeletion)
+            {
+                farbe = leeresBild;
+            }
+
+            var image = document.createElement('img');
+
+            image.setAttribute('src', farbe);
+            image.setAttribute('id', i + '-i-' + j);
+            image.setAttribute('title', '[X : ' + spielfeld[i][j].x + ', Y : ' + spielfeld[i][j].y + ' ] Value :' + spielfeld[i][j].value);
+
+            $(image).appendTo(div);
 
 
 
-    // Spielfeld neu zeichnen
-    spielfeldZeichnen();
+
+
+            console.log()
+
+            // ändere image des divs
+            
+        }
+
+    }
+    spielfeldAusgeben();
+
 }
 
 // RNG (Random Number Generator) des Spiels
@@ -746,176 +768,208 @@ function moveBlocks()
 
     var zaehler = 0;
     var position;
-
     // Prüfe für jede Sppalte
-    for(var x = getSpalte(0).length; x >= 0; x--)
+    for(var y = rows-1; y>=0; y--)
     {
-    	position = null;
-        var current_spalte = getSpalte(x);
-        for(var i = current_spalte.length; i>=0; i--){ 
-        	if(i<current_spalte.length && current_spalte[i].flaggedForDeletion && current_spalte[i+1].flaggedForDeletion===false)
-            {  //tritt ein wenn aktuelles feld leer ist und das Feld davor ein Block und es nicht die unterste Reihe ist
-                position = current_spalte[i];
-            }
-            else if( i === current_spalte.length && current_spalte[i].flaggedForDeletion===true)
+        position = null;
+        for(var x = cols-1; x >= 0 && position >=0; x--)
             {
-            	position = current_spalte[i];
+            if(x === cols-1 && spielfeld[x][y].flaggedForDeletion)
+                {
+                position = x;
+                }
+            else if(x<=cols-1 && spielfeld[x][y].flaggedForDeletion && !spielfeld[x+1][y].flaggedForDeletion)
+                {  //tritt ein wenn aktuelles feld leer ist und das Feld davor ein Block und es nicht die unterste Reihe ist
+                position = x;
+                }   
+             else if(!spielfeld[x][y].flaggedForDeletion && position!=null)
+                {
+                console.log(position);
+                tausche(spielfeld[position][y],spielfeld[x][y]);
+                position--;
+                }
             }
-             else if(current_spalte[i].flaggedForDeletion===false && position!=null)
+        if (position != null)
             {
-            	tausche(position,current_spalte[i]);
+            for(var i = position; i>=0; i--)
+                {
+                console.log("4");
+                spielfeld[i][y].value = getRandomInt(0,anzahlSteine);
+                }
             }
-		}
-		for(var x = position; x>=0; x--)
-		{
-			current_spalte[x].value = getRandomInt(0,anzahlSteine);
-		}
-	}
-
+        }
 }
+
+
+
+
+
+
 
 function CheckMovePossible()
 {
-	//Ausgegangen wird davon das kein Spielstein für die Löschung markiert ist
-	
-	var count = 0; //Variable zählt mögliche Spielzüge
-	//Durchgang Reihe
-	for (var yi=0;yi<cols;yi++)
-	{
-		for(var xi=0;xi<rows;xi++)
-		{
-			for(pi=0;pi==4;pi++)
-			{
-				if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
-					{
-                        // Abbrechen da Spielzug möglich (unnötige Rechenlast)
-						count++;
-					}
-			}
-		}
-	}
-	if(count == 0)
-	{
-		console.log("Kein Spielzug möglich!");
-	}
-	else
-	{
-		console.log(count.toString()+" Spielzüge möglich");
-	}
+//Ausgegangen wird davon das kein Spielstein für die Löschung markiert ist
+var count = 0; //Variable zählt mögliche Spielzüge
+//Durchgang Reihe
+for (var xi=0;xi<=cols-1;xi++)
+{
+
+for(var yi=0;yi<=rows-1;yi++)
+{
+
+for(pi=1;pi<=4;pi++)
+{
+if(boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi))
+{
+console.log("Spielzug möglich an Position : ["+xi+"]["+yi+"]");
+count++;
+}
+}
+}
+}
+if(count == 0)
+{
+console.log("Kein Spielzug möglich!");
+}
+else
+{
+console.log(count.toString()+" Spielzüge möglich");
+}
 }
 
 function boolMovePossibilties(x, y, value, intPosib)
 {
-	// TODO!!!! Überprüfung OutOfBoundException bei Randelementen!
-	var boolPoss = false
-	switch(intPosib){
-		case 1 : // 2 nebeneinander horizontal
-			if(spielfeld[x+1][y].value===value)
-			{
-				switch(true){
-				case spielfeld[x+3][y].value===value: 
-					boolPoss = true; 
-					break;
-				case spielfeld[x+2][y+1].value===value: 
-					boolPoss = true; 
-					break;
-				case y-1>=0: 
-					if(spielfeld[x+2][y-1].value===value)
-						{
-							boolPoss = true; 
-						} 
-						break; 
-				case x-1>=0: 
-					if(spielfeld[x-1][y+1].value===value)
-						{
-							boolPoss = true; 
-						} 
-						break;
-				case x-1>=0 && y-1<=0: 
-					if(spielfeld[x-1][y-1].value===value)
-						{
-							boolPoss = true; 
-						} 
-						break;
-				case x-2>=0: 
-					if(spielfeld[x-2][y].value===value)
-						{
-							boolPoss =true; 
-						} 
-						break;					}
-			}
-			break;
-		case 2 : //2 m Lücke vertikel
-			if(spielfeld[x+2][y].value===value)
-			{
-				switch(true){
-				case spielfeld[x+1][y+1].value===value: 
-					boolPoss = true; 
-					break;
-				case y-1>=0: 
-					if(spielfeld[x+1][y-1].value===value)
-						{
-							boolPoss = true; 
-						} 
-						break;
-			}
-		}
-		break;
-		case 3 : //2 nebeneinander vertikal
-			if(spielfeld[x][y+1].value===value)
-			{
-				switch(true){
-				case spielfeld[x][y+2].value===value: 
-					boolPoss = true; 
-					break;
-				case spielfeld[x+2][y+1].value===value: 
-					boolPoss = true; 
-					break;
-				case y-1>=0: 
-					if(spielfeld[x+1][y-1].value===value) 
-						{
-							boolPoss = true; 
-						} 
-					break;
-				case x-1>=0: 
-					if(spielfeld[x-1][y].value===value) 
-						{
-							boolPoss = true; 
-						} 
-					break;
-				case x-1>=0 && y-1<=0:
-					if(spielfeld[x-1][y-1].value===value) 
-						{
-							boolPoss = true; 
-						} 
-					break;
-				case y-2>=0: 
-					if(spielfeld[x][y-2].value===value) 
-						{
-							boolPoss = true; 
-						} 
-					break;
-			}
-		}
-		break;
-		case 4 : //2 m Lücke horizontal
-			if(spielfeld[x][y+2].value===value)
-			{
-				switch(true){
-				case spielfeld[x+1][y+1].value===value: 
-				boolPoss = true; 
-				break;
-				case x-1>=0: 
-				if(spielfeld[x-1][y+1].value===value)
-				 {
-				 	boolPoss = true; 
-				 } 
-				 break;
-			}
-			}
-			break;
-	}
-	return boolPoss;
+    // TODO!!!! Überprüfung OutOfBoundException bei Randelementen!
+    var boolPoss = false
+    switch(true){
+        case intPosib===1&& x+1<=cols-1: // 2 nebeneinander horizontal
+            if(spielfeld[x+1][y].value===value)
+            {
+                switch(true){
+                case x+3<cols:
+                    if(spielfeld[x+3][y].value===value)
+                        {
+                            boolPoss = true;
+                        }
+                    break;
+                case x+2<cols && y+1 <rows:
+                    if(spielfeld[x+2][y+1].value===value) 
+                        {
+                            boolPoss = true;
+                        } 
+                    break;
+                case y-1>=0 && x+2<cols: 
+                    if(spielfeld[x+2][y-1].value===value)
+                        {
+                            boolPoss = true; 
+                        } 
+                        break; 
+                case x-1>=0 && y+1<rows: 
+                    if(spielfeld[x-1][y+1].value===value)
+                        {
+                            boolPoss = true; 
+                        } 
+                        break;
+                case x-1>=0 && y-1<=0: 
+                    if(spielfeld[x-1][y-1].value===value)
+                        {
+                            boolPoss = true; 
+                        } 
+                        break;
+                case x-2>=0: 
+                    if(spielfeld[x-2][y].value===value)
+                        {
+                            boolPoss =true; 
+                        } 
+                        break;                  }
+            }
+            break;
+        case intPosib===2&& x+2<=cols-1: //2 m Lücke vertikel
+            if(spielfeld[x+2][y].value===value)
+            {
+                switch(true){
+                case x+1<cols && y+1<rows:
+                    if(spielfeld[x+1][y+1].value===value)
+                        { 
+                            boolPoss = true; 
+                        }
+                        break;
+                case y-1>=0 && x+1<cols: 
+                    if(spielfeld[x+1][y-1].value===value)
+                        {
+                            boolPoss = true; 
+                        } 
+                        break;
+            }
+        }
+        break;
+        case intPosib===3&& y+1<=rows-1: //2 nebeneinander vertikal
+            if(y+1<=rows-1 && spielfeld[x][y+1].value===value)
+            {
+                switch(true){
+                case y+2<rows:
+                    if(spielfeld[x][y+2].value===value)
+                        {
+                            boolPoss = true;
+                        } 
+                    break;
+                case x+2<cols && y+1<rows:
+                    if(spielfeld[x+2][y+1].value===value) 
+                        {
+                            boolPoss = true; 
+                        }
+                    break;
+                case y-1>=0 && x+1<cols: 
+                    if(spielfeld[x+1][y-1].value===value) 
+                        {
+                            boolPoss = true; 
+                        } 
+                    break;
+                case x-1>=0: 
+                    if(spielfeld[x-1][y].value===value) 
+                        {
+                            boolPoss = true; 
+                        } 
+                    break;
+                case x-1>=0 && y-1<=0:
+                    if(spielfeld[x-1][y-1].value===value) 
+                        {
+                            boolPoss = true; 
+                        } 
+                    break;
+                case y-2>=0: 
+                    if(spielfeld[x][y-2].value===value) 
+                        {
+                            boolPoss = true; 
+                        } 
+                    break;
+            }
+        }
+        break;
+        case intPosib===4 && y+2<=rows-1: //2 m Lücke horizontal
+            if(spielfeld[x][y+2].value===value)
+            {
+                switch(true){
+                case x+1<cols && y+1<rows:
+                if(spielfeld[x+1][y+1].value===value)
+                {
+                    boolPoss = true;
+                } 
+                break;
+                case x-1>=0 && y+1<rows: 
+                if(spielfeld[x-1][y+1].value===value)
+                 {
+                    boolPoss = true; 
+                 } 
+                 break;
+            }
+            }
+            break;
+    }
+    if(boolPoss){
+        console.log("möglicher Spielzug entdeckt");
+    }
+    return boolPoss;
 }
 
 //######################### Martins Block Ende ############################//
