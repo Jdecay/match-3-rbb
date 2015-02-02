@@ -788,6 +788,11 @@ function shakeBoard()
     $('#spielcontainer').effect( "shake" );
 }
 
+function todo()
+{
+    console.warn("NOT IMPLEMENTED YET");
+}
+
 // Funktion die ein neues Spielfeld per RNG generiert.
 function neuesSpielfeld()
 {
