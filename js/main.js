@@ -20,7 +20,7 @@ function spielstein(x, y, value) {
 
     this.select = function ()
     {
-        if(spielerEingabe){
+        if(spielerEingabe && !gameOver){
         console.warn(x + '/' + y);
 
 
@@ -100,13 +100,13 @@ spielfeld = [];
 // Der Bilder Array der Werte auf Spielsteine abbildet
 var spielsteine = [];
 
-var anzahlSteine = 6;
+var anzahlSteine = 4;
 
 // Anzahl Reihen 
-var rows = 12;
+var rows = 5;
 
 // Anzahl Spalten
-var cols = 20;
+var cols = 8;
 
 var game;
 
@@ -115,6 +115,8 @@ var initialisiert = false;
 var gameReady = false;
 
 var boardFull = false;
+
+var gameOver = false;
 
 var selektierterSpielstein;
 
@@ -186,6 +188,8 @@ function tausche(spielstein1, spielstein2,spielertausch)
 
 function spielfeldZeichnen()
 {
+
+    $("#spielcontainer").empty();
     // Erstelle Spielfeld mithilfe jQuery
     // Durchlaufe jedes Element im Spielfeld Array 
 
@@ -458,7 +462,6 @@ function markiereSteine(posX, posY, isReihe, count)
     for (var k = 0; k < count; k++)
     {
         // Markiere Felder die gelöscht werden können
-        // Vergebe Punkte an Spieler
         if (isReihe)
         {
             // array repräsentiert eine Reihe, markiere steine auf der x achse indem du y erhöst
@@ -563,10 +566,11 @@ function spielfeldAuffuellen()
                     updateTime = updateTime - 1;
                     $("b[id=show-time]").html(updateTime);
 
-                    if(updateTime == 0){
+                    if(updateTime === 0){
                         //wenn Timer abläuft
                         $('#gameOver').modal('show');
                         $('#punkteStandBeiGameOver').text(sp.punkte);
+                        gameOver = true;
                         updateTime = 50;
                         stopTimer();
                     }
@@ -661,6 +665,8 @@ function ladeBilder()
 function starteSpiel()
 {
     gameReady = false;
+    gameOver = false;
+    resetPlayerPoints();
 
     if (!initialisiert)
     {
@@ -686,7 +692,7 @@ function starteSpiel()
         neuesSpielfeld();
         spielfeldAktualisieren();
         startLoop();
-         startTimer();
+        startTimer();
     }
 }
 
@@ -694,7 +700,11 @@ function starteBenutzerdefiniertesSpiel()
 {
     rows = $('#bdef_reihen').val();
     cols = $('#bdef_spalten').val();
+    spielfeldInitialisieren();
+    spielfeldZeichnen();
     starteSpiel();
+    startLoop();
+    startTimer();
 }
 
 function startLoop()
@@ -741,6 +751,7 @@ function GameLoop()
         // Gucken ob es mögliche Züge gibt
          if(!CheckMovePossible())
             {
+                shakeBoard();
                 console.warn("Kein Zug mehr möglich");
                 neuesSpielfeld();
             }
@@ -770,6 +781,11 @@ function fuellen()
     moveBlocks();
     spielfeldAktualisieren();
     spielfeldAuffuellen();
+}
+
+function shakeBoard()
+{
+    $('#spielcontainer').effect( "shake" );
 }
 
 // Funktion die ein neues Spielfeld per RNG generiert.
@@ -859,7 +875,7 @@ function playMusic()
     musicPlayer = new Howl({
         urls : ['music/doodle.mp3'],
         loop: true,
-        volume: 0.5
+        volume: 0.3
     }).fadeIn(0.5, 5000);
 
   //   var sound = new Howl({
@@ -1147,6 +1163,16 @@ function spielerErstellen() {
     $('#spieler_punkte').text(sp.punkte);
     console.log(sp.punkte);
     $('#neuerSpieler').modal('hide');
+}
+
+function resetPlayerPoints()
+{
+    if (sp)
+    {
+        sp.punkte = 0;
+        $('#spieler_punkte').text(sp.punkte);
+
+    }
 }
 
 //######################### Olivers Block Ende ############################//
