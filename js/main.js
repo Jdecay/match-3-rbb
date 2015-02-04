@@ -529,7 +529,7 @@ function spielfeldAuffuellen()
         if (spielfeld[0][i].flaggedForDeletion)
         {
             console.info('Leeres Feld gefunden. Fülle auf.')
-            spielfeld[0][i] = new spielstein(0, i, getRandomInt(0, 8));
+            spielfeld[0][i] = new spielstein(0, i, getRandomInt(0, anzahlSteine));
             emptyFields++;
         }
 
