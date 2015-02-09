@@ -963,24 +963,22 @@ function moveBlocks()
 
 function CheckMovePossible()
 {
-//Ausgegangen wird davon das kein Spielstein für die Löschung markiert ist
 //Variable zählt mögliche Spielzüge
 var count = 0;
 
 //Durchgang Reihe
-for (var xi=0;xi<=cols-1;xi++)
+for (var xi=0;xi<cols;xi++)
     {
 
-    for(var yi=0;yi<=rows-1;yi++)
+    for(var yi=0;yi<rows;yi++)
         {
 
             for(pi=1;pi<=4;pi++)
             {
-                var movePossible = boolMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi);
+                var movePossible = arrMovePossibilties(xi, yi, spielfeld[xi][yi].value, pi);
                 if(movePossible!=false)
                     {
-                        console.log("Spielzug (Muster "+pi+") möglich an Position : ["+xi+"]["+yi+"]");
-                        console.log("mit Steinen: 1.("+movePossible[0]+"), 2. ("+movePossible[1]+"), 3.("+movePossible[2]+")");
+                        console.log("Spielzug (Muster "+pi+") möglich mit Steinen: 1.("+movePossible[0]+"), 2. ("+movePossible[1]+"), 3.("+movePossible[2]+")");
                         count++;
                     }
                 }
@@ -998,159 +996,111 @@ for (var xi=0;xi<=cols-1;xi++)
     }
 }
 
-function boolMovePossibilties(x, y, value, intPosib)
+function arrMovePossibilties(x, y, value, intPosib)
 {
     // TODO!!!! Überprüfung OutOfBoundException bei Randelementen!
     var boolPoss = false;
     var valStones = [[x,y]];
     switch(true){
-        case intPosib===1&& x+1<=cols-1: // 2 nebeneinander horizontal
+        case intPosib===1&& x+1<cols: // 2 nebeneinander horizontal
             if(spielfeld[x+1][y].value===value)
             {
-                    valStones.push([x+1,y]);
+                valStones.push([x+1,y]);
                 switch(true){
-                case x+3<cols:
-                    if(spielfeld[x+3][y].value===value)
-                        {
-                                    valStones.push([x+3,y]);
-                            boolPoss = true;
-                        }
-                    break;
-                case x+2<cols && y+1 <rows:
-                    if(spielfeld[x+2][y+1].value===value)
-                        {
-                                    valStones.push([x+2,y+1]);
-                            boolPoss = true;
-                        }
-                    break;
-                case y-1>=0 && x+2<cols:
-                    if(spielfeld[x+2][y-1].value===value)
-                        {
-                                    valStones.push([x+2,y-1]);
-                            boolPoss = true;
-                        }
-                        break;
-                case x-1>=0 && y+1<rows:
-                    if(spielfeld[x-1][y+1].value===value)
-                        {
-                            valStones.push([x-1,y+1])
-                            boolPoss = true;
-                        }
-                        break;
-                case x-1>=0 && y-1<=0:
-                    if(spielfeld[x-1][y-1].value===value)
-                        {
-                            valStones.push([x-1,y-1])
-                            boolPoss = true;
-                        }
-                        break;
-                case x-2>=0:
-                    if(spielfeld[x-2][y].value===value)
-                        {
-                            valStones.push([x-2,y])
-                            boolPoss =true;
-                        }
-                        break;                  }
-            }
+                case x+3<cols && spielfeld[x+3][y].value===value:
+                    valStones.push([x+3,y]);
+                    boolPoss = true;
+break;
+                case x+2<cols && y+1<rows && spielfeld[x+2][y+1].value===value:
+valStones.push([x+2,y+1]);
+boolPoss = true;
+break;
+                case y-1>=0 && x+2<cols && spielfeld[x+2][y-1].value===value:
+                    valStones.push([x+2,y-1]);
+                    boolPoss = true;
+break;                     
+                case x-1>=0 && y+1<rows && spielfeld[x-1][y+1].value===value:
+                    valStones.push([x-1,y+1])
+                    boolPoss = true;
+break;                       
+                case x-1>=0 && y-1>=0 && spielfeld[x-1][y-1].value===value:
+                    valStones.push([x-1,y-1])
+                    boolPoss = true;
+break;                    
+                case x-2>=0 && spielfeld[x-2][y].value===value:
+                    valStones.push([x-2,y])
+                    boolPoss =true;
+break;
+                    }
+}
             break;
-        case intPosib===2&& x+2<=cols-1: //2 m Lücke vertikel
+        case intPosib===2&& x+2<cols: //2 m Lücke vertikel
             if(spielfeld[x+2][y].value===value)
             {
                 valStones.push([x+2,y])
                 switch(true){
-                case x+1<cols && y+1<rows:
-                    if(spielfeld[x+1][y+1].value===value)
-                        {
-                            valStones.push([x+1,y+1])
-                            boolPoss = true;
-                        }
-                        break;
-                case y-1>=0 && x+1<cols:
-                    if(spielfeld[x+1][y-1].value===value)
-                        {
-                            valStones.push([x+1,y-1])
-                            boolPoss = true;
-                        }
-                        break;
+                case x+1<cols && y+1<rows && spielfeld[x+1][y+1].value===value:
+                    valStones.push([x+1,y+1])
+                    boolPoss = true;
+break;
+                case y-1>=0 && x+1<cols && spielfeld[x+1][y-1].value===value:
+                    valStones.push([x+1,y-1])
+                    boolPoss = true;
+break;
             }
         }
         break;
-        case intPosib===3&& y+1<=rows-1: //2 nebeneinander vertikal
-            if(y+1<=rows-1 && spielfeld[x][y+1].value===value)
+        case intPosib===3 && y+1<rows: //2 nebeneinander vertikal
+            if(spielfeld[x][y+1].value===value)
             {
                 valStones.push([x,y+1]);
                 switch(true){
-                case y+2<rows:
-                    if(spielfeld[x][y+2].value===value)
-                        {
-                            valStones([x,y+2]);
-                            boolPoss = true;
-                        }
-                    break;
-                case x+2<cols && y+1<rows:
-                    if(spielfeld[x+2][y+1].value===value)
-                        {
-                            valStones.push([x+2,y+1]);
-                            boolPoss = true;
-                        }
-                    break;
-                case y-1>=0 && x+1<cols:
-                    if(spielfeld[x+1][y-1].value===value)
-                        {
-                            valStones.push([x+1,y-1])
-                            boolPoss = true;
-                        }
-                    break;
-                case x-1>=0:
-                    if(spielfeld[x-1][y].value===value)
-                        {
-                            valStones.push([x-1,y])
-                            boolPoss = true;
-                        }
-                    break;
-                case x-1>=0 && y-1<=0:
-                    if(spielfeld[x-1][y-1].value===value)
-                        {
-                            valStones.push([x-1,y-1])
-                            boolPoss = true;
-                        }
-                    break;
-                case y-2>=0:
-                    if(spielfeld[x][y-2].value===value)
-                        {
-                            valStones.push([x,y-2])
-                            boolPoss = true;
-                        }
-                    break;
-            }
-        }
-        break;
-        case intPosib===4 && y+2<=rows-1: //2 m Lücke horizontal
+                case y+3<rows && spielfeld[x][y+3].value===value:
+                    valStones.push([x,y+3]);
+                    boolPoss = true;
+break;
+                case x+1<cols && y+2<rows && spielfeld[x+1][y+2].value===value:
+                    valStones.push([x+1,y+2]);
+                    boolPoss = true;
+break;
+                case x-1>=0 && y+2<rows && spielfeld[x-1][y+2].value===value:
+                    valStones.push([x-1,y+2]);
+                    boolPoss = true;
+break;
+                case x+1<cols && y-1>=0 && spielfeld[x+1][y-1].value===value:
+                    valStones.push([x+1,y-1]);
+                    boolPoss = true;
+break;
+                case x-1>=0 && y-1>=0 && spielfeld[x-1][y-1].value===value:
+valStones.push([x-1,y-1]);
+                    boolPoss = true;
+break;
+                case y-2>=0 && spielfeld[x][y-2].value===value:
+valStones.push([x,y-2]);
+                    boolPoss = true;
+break;
+}
+}
+break;
+        case intPosib===4 && y+2<rows: //2 m Lücke horizontal
             if(spielfeld[x][y+2].value===value)
             {
-                valStones.push([x,y+2])
+                valStones.push([x,y+2]);
                 switch(true){
-                case x+1<cols && y+1<rows:
-                if(spielfeld[x+1][y+1].value===value)
-                {
-                    valStones.push([x+1,y+1])
+                case x+1<cols && y+1<rows && spielfeld[x+1][y+1].value===value:
+valStones.push([x+1,y+1]);
                     boolPoss = true;
-                }
-                break;
-                case x-1>=0 && y+1<rows:
-                if(spielfeld[x-1][y+1].value===value)
-                 {
-                     valStones.push([x-1,y+1])
+break;
+                case x-1>=0 && y+1<rows && spielfeld[x-1][y+1].value===value:
+                    valStones.push([x-1,y+1]);
                     boolPoss = true;
-                 }
-                 break;
-            }
+break;
+}
             }
             break;
     }
     if(boolPoss){
         return valStones;
-        console.log("möglicher Spielzug entdeckt");
     }
     else{
         return false;
