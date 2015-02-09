@@ -126,7 +126,7 @@ var punkteStand = 0;
 
 var timer;
 
-var countInSeconds = 5;
+var countInSeconds = 90;
 
 var spielerEingabe = false;
 
