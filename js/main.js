@@ -76,9 +76,7 @@ function spielstein(x, y, value) {
         // console.log('markiere Stein '+x+' / '+y);
         // console.log('#'+ x + '-d-' + y);
          $('#'+ x + '-d-' + y).toggleClass('selektiert');
-         if(gameReady){
-         pop();
-            }
+         
     }
 
     this.toString = function ()
@@ -133,11 +131,6 @@ var spielerEingabe = false;
 //Der Spieler
 var sp;
 
-var musicPlayer;
-
-var soundeffects = ['soundeffects/pop.ogg'];
-
-var music = ['music/doodle.mp3'];
 
 // Platz für Methoden
 
@@ -476,6 +469,9 @@ function markiereSteine(posX, posY, isReihe, count)
         }
     }
         $('.selektiert').find('img').hide('explode', {"pieces":4}, 200);
+        if(gameReady){
+         boom.play();
+        }
 }
 
 function unMarkAll()
@@ -682,7 +678,7 @@ function starteSpiel()
         // Neuer Spieler "Default"
         spielerErstellen();
 
-        playMusic();
+        // playMusic();
         startLoop();
         startTimer();
     }
@@ -876,44 +872,33 @@ function getRandomInt(min, max) {
 
 // Abschnitt Musik und Soundeffeckte
 
-function playMusic()
-{
-    musicPlayer = new Howl({
+var musicPlayer = new Howl({
         urls : ['music/doodle.mp3'],
         loop: true,
         volume: 0.3
-    }).fadeIn(0.5, 5000);
+    });
 
-  //   var sound = new Howl({
-  // urls: ['sound.mp3']
-// }).play();
-}
-
-function toggleMusic()
-{
-    if(musicPlayer)
-    {
-        musicPlayer.stop();
-        musicPlayer = "";
-        console.log("Musik gestoppt.");
-        $('#music_toggle').toggleClass('striketrough');
-    }
-    else
-    {
-        playMusic();
-        console.log("Musik gestartet.");
-    }
-}
-
-
-
-function pop()
-{
-    var pop = new Howl({
+var boom = new Howl({
         urls : ['sounds/pop.ogg']
-    }).play();
+    });
+// Funktion startet die Musik und generiert einen neuen Button in der Navigationsleiste
+function playMusic()
+{
+    musicPlayer.stop().play();
 
 }
+
+function pauseMusic()
+{
+    musicPlayer.pause();
+};
+
+// Funktion startet die Musik und generiert einen neuen Button in der Navigationsleiste
+function stopMusic()
+{
+    musicPlayer.stop();
+};
+
 
 // Funktion die aufgerufen wird sobald die Seite geladen wurde.
 $(document).ready(function ()

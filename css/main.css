@@ -126,7 +126,14 @@ td
 	
 }
 
+.music-stop
+{
+	onclick:stopMusic();
+}
 
+.music-play{
+	onclick:playMusic();
+}
 
 .link, .link:hover
 {
