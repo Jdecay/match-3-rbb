@@ -475,6 +475,7 @@ function markiereSteine(posX, posY, isReihe, count)
             spielfeld[posX + k][posY].setMarked();
         }
     }
+        $('.selektiert').find('img').hide('explode', {"pieces":4}, 200);
 }
 
 function unMarkAll()
